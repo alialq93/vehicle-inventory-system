@@ -9,6 +9,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- Tracking section: charts (Chart.js) and map (Leaflet) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+    <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     
     <style>
         /* ========================================
@@ -2695,90 +2699,134 @@
 
             <!-- Page: Tracking -->
             <div id="page-tracking" class="page-content">
-                <div style="padding: 30px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; flex-wrap: wrap; gap: 15px;">
-                        <h2 style="color: var(--text-dark); display: flex; align-items: center; gap: 10px; margin: 0;">
-                            <i class="fas fa-route" style="color: var(--primary-color);"></i> <span data-i18n="pages.tracking.title">تتبع المركبات والمشاريع</span>
-                        </h2>
-                    </div>
-                    
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 30px;">
-                        <div style="background: white; padding: 20px; border-radius: var(--border-radius); box-shadow: var(--shadow-sm);">
-                            <h3 style="color: var(--text-dark); margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
-                                <i class="fas fa-filter"></i> <span data-i18n="pages.tracking.advancedFilter">فلترة متقدمة</span>
-                            </h3>
-                            <div class="form-group" style="margin-bottom: 15px;">
-                                <label data-i18n="pages.tracking.project">المشروع:</label>
-                                <select id="tracking-project-filter" onchange="filterTracking()">
-                                    <option value="" data-i18n="pages.tracking.allProjects">كل المشاريع</option>
-                                </select>
-                            </div>
-                            <div class="form-group" style="margin-bottom: 15px;">
-                                <label data-i18n="pages.tracking.validityStatus">حالة الصلاحية:</label>
-                                <select id="tracking-validity-filter" onchange="filterTracking()">
-                                    <option value="" data-i18n="pages.tracking.allStatuses">كل الحالات</option>
-                                    <option value="مستمرة" data-i18n="vehicleForm.validity.valid">مستمرة</option>
-                                    <option value="نافذة" data-i18n="vehicleForm.validity.expired">نافذة</option>
-                                    <option value="قريب الانتهاء" data-i18n="vehicleForm.validity.nearExpiry">قريب الانتهاء</option>
-                                </select>
-                            </div>
-                            <div class="form-group" style="margin-bottom: 15px;">
-                                <label data-i18n="pages.tracking.vehicleType">نوع المركبة:</label>
-                                <select id="tracking-type-filter" onchange="filterTracking()">
-                                    <option value="" data-i18n="pages.tracking.allTypes">كل الأنواع</option>
-                                </select>
-                            </div>
-                            <div class="form-group" style="margin-bottom: 0;">
-                                <label data-i18n="pages.tracking.vehicleStatus">حالة المركبة:</label>
-                                <select id="tracking-status-filter" onchange="filterTracking()">
-                                    <option value="" data-i18n="pages.tracking.allStatuses">كل الحالات</option>
-                                    <option value="سارية" data-i18n="stats.active">سارية</option>
-                                    <option value="متوقفة" data-i18n="stats.inactive">متوقفة</option>
-                                    <option value="صيانة" data-i18n="stats.maintenance">صيانة</option>
-                                    <option value="مسحوبة">مسحوبة</option>
-                                </select>
-                            </div>
-                        </div>
-                        
-                        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: var(--border-radius); box-shadow: var(--shadow-md);">
-                            <h3 style="margin-bottom: 20px; font-size: 18px;" data-i18n="pages.tracking.statistics">إحصائيات التتبع</h3>
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                                <div>
-                                    <div style="font-size: 32px; font-weight: bold;" id="tracking-total-projects">0</div>
-                                    <div style="font-size: 14px; opacity: 0.9;" data-i18n="pages.tracking.activeProjects">المشاريع النشطة</div>
-                                </div>
-                                <div>
-                                    <div style="font-size: 32px; font-weight: bold;" id="tracking-expired-validity">0</div>
-                                    <div style="font-size: 14px; opacity: 0.9;" data-i18n="pages.tracking.expiredValidity">صلاحيات منتهية</div>
-                                </div>
-                                <div>
-                                    <div style="font-size: 32px; font-weight: bold;" id="tracking-near-expiry">0</div>
-                                    <div style="font-size: 14px; opacity: 0.9;" data-i18n="pages.tracking.nearExpiry">قريبة الانتهاء</div>
-                                </div>
-                                <div>
-                                    <div style="font-size: 32px; font-weight: bold;" id="tracking-total-vehicles">0</div>
-                                    <div style="font-size: 14px; opacity: 0.9;" data-i18n="pages.tracking.totalVehicles">إجمالي المركبات</div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div style="background: white; padding: 20px; border-radius: var(--border-radius); box-shadow: var(--shadow-sm);">
-                            <h3 style="color: var(--text-dark); margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
-                                <i class="fas fa-chart-line"></i> <span data-i18n="pages.tracking.quickActions">إجراءات سريعة</span>
-                            </h3>
-                            <div style="display: flex; flex-direction: column; gap: 10px;">
-                                <button class="btn btn-primary" onclick="exportTrackingReport()" style="width: 100%; padding: 12px;">
-                                    <i class="fas fa-file-excel"></i> <span data-i18n="pages.tracking.exportReport">تصدير تقرير التتبع</span>
-                                </button>
-                                <button class="btn btn-secondary" onclick="showTrackingChart()" style="width: 100%; padding: 12px;">
-                                    <i class="fas fa-chart-pie"></i> <span data-i18n="pages.tracking.showCharts">عرض الرسوم البيانية</span>
-                                </button>
-                            </div>
+                <style>
+                    .trk-wrap { padding: 24px 30px; }
+                    .trk-header { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:14px; margin-bottom:18px; }
+                    .trk-title { margin:0; font-size:20px; font-weight:800; color:var(--text-dark); display:flex; align-items:center; gap:10px; }
+                    .trk-title i { color:var(--primary-color); }
+                    .trk-tabs { display:flex; gap:6px; flex-wrap:wrap; background:var(--gray-50,#f7f8fb); padding:5px; border-radius:12px; border:1px solid var(--border-light,#e9edf3); }
+                    .trk-tab { border:none; background:transparent; padding:9px 16px; border-radius:9px; font-size:13px; font-weight:600; color:var(--text-light); cursor:pointer; display:flex; align-items:center; gap:7px; transition:all .2s; }
+                    .trk-tab:hover { color:var(--text-dark); }
+                    .trk-tab.active { background:var(--white,#fff); color:var(--primary-color); box-shadow:0 1px 3px rgba(16,24,40,.12); }
+
+                    .trk-kpis { display:grid; grid-template-columns:repeat(6,1fr); gap:12px; margin-bottom:18px; }
+                    .trk-kpi { background:var(--white,#fff); border:1px solid var(--border-light,#e9edf3); border-radius:14px; padding:14px 16px; box-shadow:0 1px 3px rgba(16,24,40,.06); }
+                    .trk-kpi .k-num { font-size:24px; font-weight:800; color:var(--text-dark); line-height:1; }
+                    .trk-kpi .k-lbl { font-size:12px; color:var(--text-light); margin-top:6px; display:flex; align-items:center; gap:6px; }
+                    .trk-kpi.warn .k-num { color:#fd7e14; }
+                    .trk-kpi.danger .k-num { color:#dc3545; }
+                    .trk-kpi.good .k-num { color:#1b8a52; }
+                    @media (max-width:1100px){ .trk-kpis{ grid-template-columns:repeat(3,1fr);} }
+                    @media (max-width:600px){ .trk-kpis{ grid-template-columns:repeat(2,1fr);} }
+
+                    .trk-filters { background:var(--white,#fff); border:1px solid var(--border-light,#e9edf3); border-radius:14px; padding:16px; box-shadow:0 1px 3px rgba(16,24,40,.06); margin-bottom:18px; display:flex; flex-wrap:wrap; gap:12px; align-items:flex-end; }
+                    .trk-filters .fg { display:flex; flex-direction:column; gap:5px; }
+                    .trk-filters label { font-size:12px; font-weight:600; color:var(--text-light); }
+                    .trk-filters input, .trk-filters select { padding:9px 11px; border:1px solid var(--border-color,#d7dce3); border-radius:9px; font-size:13px; background:var(--white,#fff); min-width:150px; }
+                    .trk-filters .fg.search input { min-width:230px; }
+                    .trk-reset { padding:9px 16px; border:1px solid var(--border-color,#d7dce3); background:var(--white,#fff); color:var(--text-dark); border-radius:9px; font-size:13px; cursor:pointer; height:38px; display:inline-flex; align-items:center; gap:7px; }
+                    .trk-reset:hover { background:var(--gray-50,#f7f8fb); }
+
+                    .kanban { display:flex; gap:16px; overflow-x:auto; padding-bottom:10px; align-items:flex-start; }
+                    .kanban-col { flex:0 0 300px; background:var(--gray-50,#f7f8fb); border:1px solid var(--border-light,#e9edf3); border-radius:14px; padding:12px; min-height:120px; transition:background .15s, box-shadow .15s; }
+                    .kanban-col.drag-over { background:#eef0ff; box-shadow:0 0 0 2px var(--primary-color) inset; }
+                    .kanban-col h4 { margin:0 0 10px; font-size:14px; font-weight:800; color:var(--text-dark); display:flex; align-items:center; justify-content:space-between; gap:8px; }
+                    .kanban-col .col-badge { background:var(--primary-color); color:#fff; padding:2px 10px; border-radius:20px; font-size:12px; font-weight:600; }
+                    .kanban-card { background:var(--white,#fff); border:1px solid var(--border-light,#e9edf3); border-radius:10px; padding:11px 12px; margin-bottom:10px; cursor:grab; box-shadow:0 1px 2px rgba(16,24,40,.06); border-right:4px solid var(--primary-color); }
+                    .kanban-card:active { cursor:grabbing; }
+                    .kanban-card.dragging { opacity:.45; }
+                    .kanban-card .kc-title { font-weight:700; font-size:13px; color:var(--text-dark); margin-bottom:5px; }
+                    .kanban-card .kc-meta { font-size:12px; color:var(--text-light); display:flex; align-items:center; gap:6px; margin-top:3px; }
+
+                    .trk-section { background:var(--white,#fff); border:1px solid var(--border-light,#e9edf3); border-radius:14px; padding:20px; box-shadow:0 1px 3px rgba(16,24,40,.06); margin-bottom:18px; }
+                    .trk-charts-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:18px; }
+                    #trk-map { height:480px; border-radius:14px; overflow:hidden; border:1px solid var(--border-light,#e9edf3); }
+                    .trk-feed-table { width:100%; border-collapse:collapse; }
+                    .trk-feed-table th { padding:11px 13px; text-align:right; font-size:13px; font-weight:700; color:var(--text-dark); background:var(--gray-50,#f7f8fb); border-bottom:1px solid var(--border-light,#e9edf3); }
+                    .trk-feed-table td { padding:10px 13px; font-size:13px; border-bottom:1px solid var(--border-light,#f0f0f0); }
+                </style>
+                <div class="trk-wrap">
+                    <div class="trk-header">
+                        <h2 class="trk-title"><i class="fas fa-route"></i> <span data-i18n="pages.tracking.title">تتبع المركبات والمشاريع</span></h2>
+                        <div class="trk-tabs">
+                            <button class="trk-tab active" data-view="board" onclick="setTrackingView('board')"><i class="fas fa-table-columns"></i> <span data-i18n="pages.tracking.viewBoard">اللوحة</span></button>
+                            <button class="trk-tab" data-view="list" onclick="setTrackingView('list')"><i class="fas fa-stream"></i> <span data-i18n="pages.tracking.viewActivity">سجل النشاط</span></button>
+                            <button class="trk-tab" data-view="charts" onclick="setTrackingView('charts')"><i class="fas fa-chart-pie"></i> <span data-i18n="pages.tracking.viewCharts">الرسوم</span></button>
+                            <button class="trk-tab" data-view="map" onclick="setTrackingView('map')"><i class="fas fa-map-location-dot"></i> <span data-i18n="pages.tracking.viewMap">الخريطة</span></button>
                         </div>
                     </div>
-                    
-                    <div id="tracking-content">
-                        <!-- Tracking content will be loaded here -->
+
+                    <div class="trk-kpis">
+                        <div class="trk-kpi"><div class="k-num" id="kpi-total">0</div><div class="k-lbl"><i class="fas fa-car-side"></i> <span data-i18n="pages.tracking.totalVehicles">إجمالي المركبات</span></div></div>
+                        <div class="trk-kpi"><div class="k-num" id="kpi-projects">0</div><div class="k-lbl"><i class="fas fa-building"></i> <span data-i18n="pages.tracking.activeProjects">المشاريع النشطة</span></div></div>
+                        <div class="trk-kpi warn"><div class="k-num" id="kpi-unassigned">0</div><div class="k-lbl"><i class="fas fa-link-slash"></i> <span data-i18n="pages.tracking.unassigned">غير مخصّصة</span></div></div>
+                        <div class="trk-kpi good"><div class="k-num" id="kpi-active">0</div><div class="k-lbl"><i class="fas fa-circle-check"></i> <span data-i18n="pages.tracking.activeVehicles">سارية</span></div></div>
+                        <div class="trk-kpi warn"><div class="k-num" id="kpi-near">0</div><div class="k-lbl"><i class="fas fa-hourglass-half"></i> <span data-i18n="pages.tracking.nearExpiry">قريبة الانتهاء</span></div></div>
+                        <div class="trk-kpi danger"><div class="k-num" id="kpi-expired">0</div><div class="k-lbl"><i class="fas fa-triangle-exclamation"></i> <span data-i18n="pages.tracking.expiredValidity">صلاحيات منتهية</span></div></div>
+                    </div>
+
+                    <div class="trk-filters">
+                        <div class="fg search">
+                            <label data-i18n="buttons.search">بحث</label>
+                            <input type="text" id="trk-search" placeholder="رقم المركبة، اللوحة، السائق..." oninput="renderTracking()">
+                        </div>
+                        <div class="fg">
+                            <label data-i18n="pages.tracking.project">المشروع</label>
+                            <select id="tracking-project-filter" onchange="renderTracking()"><option value="" data-i18n="pages.tracking.allProjects">كل المشاريع</option></select>
+                        </div>
+                        <div class="fg">
+                            <label data-i18n="pages.tracking.vehicleType">نوع المركبة</label>
+                            <select id="tracking-type-filter" onchange="renderTracking()"><option value="" data-i18n="pages.tracking.allTypes">كل الأنواع</option></select>
+                        </div>
+                        <div class="fg">
+                            <label data-i18n="pages.tracking.validityStatus">حالة الصلاحية</label>
+                            <select id="tracking-validity-filter" onchange="renderTracking()">
+                                <option value="" data-i18n="pages.tracking.allStatuses">كل الحالات</option>
+                                <option value="مستمرة">مستمرة</option>
+                                <option value="نافذة">نافذة</option>
+                                <option value="قريب الانتهاء">قريب الانتهاء</option>
+                            </select>
+                        </div>
+                        <div class="fg">
+                            <label data-i18n="pages.tracking.vehicleStatus">حالة المركبة</label>
+                            <select id="tracking-status-filter" onchange="renderTracking()">
+                                <option value="" data-i18n="pages.tracking.allStatuses">كل الحالات</option>
+                                <option value="سارية">سارية</option>
+                                <option value="متوقفة">متوقفة</option>
+                                <option value="صيانة">صيانة</option>
+                                <option value="مسحوبة">مسحوبة</option>
+                            </select>
+                        </div>
+                        <div class="fg">
+                            <label data-i18n="pages.tracking.fromDate">من تاريخ</label>
+                            <input type="date" id="trk-from-date" onchange="renderTracking()">
+                        </div>
+                        <div class="fg">
+                            <label data-i18n="pages.tracking.toDate">إلى تاريخ</label>
+                            <input type="date" id="trk-to-date" onchange="renderTracking()">
+                        </div>
+                        <button class="trk-reset" onclick="resetTrackingFilters()"><i class="fas fa-rotate-left"></i> <span data-i18n="pages.tracking.reset">إعادة تعيين</span></button>
+                        <button class="trk-reset" onclick="exportTrackingReport()"><i class="fas fa-file-excel"></i> <span data-i18n="pages.tracking.exportReport">تصدير</span></button>
+                    </div>
+
+                    <div id="trk-view-board"></div>
+                    <div id="trk-view-list" style="display:none;"></div>
+                    <div id="trk-view-charts" style="display:none;">
+                        <div class="trk-charts-grid">
+                            <div class="trk-section"><h3 style="margin:0 0 14px; font-size:15px; color:var(--text-dark);" data-i18n="pages.tracking.chartProjects">توزيع المركبات على المشاريع</h3><canvas id="chart-projects" height="220"></canvas></div>
+                            <div class="trk-section"><h3 style="margin:0 0 14px; font-size:15px; color:var(--text-dark);" data-i18n="pages.tracking.chartValidity">حالة الصلاحية</h3><canvas id="chart-validity" height="220"></canvas></div>
+                            <div class="trk-section" style="grid-column:1/-1;"><h3 style="margin:0 0 14px; font-size:15px; color:var(--text-dark);" data-i18n="pages.tracking.chartMovements">حركات المركبات عبر الزمن</h3><canvas id="chart-movements" height="150"></canvas></div>
+                        </div>
+                    </div>
+                    <div id="trk-view-map" style="display:none;">
+                        <div class="trk-section">
+                            <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; margin-bottom:14px;">
+                                <h3 style="margin:0; font-size:15px; color:var(--text-dark);"><i class="fas fa-map-location-dot" style="color:var(--primary-color);"></i> <span data-i18n="pages.tracking.projectLocations">مواقع المشاريع</span></h3>
+                                <button class="trk-reset" onclick="openProjectLocationManager()"><i class="fas fa-location-dot"></i> <span data-i18n="pages.tracking.setLocations">تحديد مواقع المشاريع</span></button>
+                            </div>
+                            <div id="trk-map"></div>
+                            <p style="margin:12px 0 0; font-size:12.5px; color:var(--text-light);" data-i18n="pages.tracking.mapHint">لإظهار المشاريع على الخريطة، حدّد إحداثيات كل مشروع عبر زر «تحديد مواقع المشاريع».</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -3654,8 +3702,23 @@
                         nearExpiry: 'قريبة الانتهاء',
                         totalVehicles: 'إجمالي المركبات',
                         quickActions: 'إجراءات سريعة',
-                        exportReport: 'تصدير تقرير التتبع',
-                        showCharts: 'عرض الرسوم البيانية'
+                        exportReport: 'تصدير',
+                        showCharts: 'عرض الرسوم البيانية',
+                        viewBoard: 'اللوحة',
+                        viewActivity: 'سجل النشاط',
+                        viewCharts: 'الرسوم',
+                        viewMap: 'الخريطة',
+                        unassigned: 'غير مخصّصة',
+                        activeVehicles: 'سارية',
+                        fromDate: 'من تاريخ',
+                        toDate: 'إلى تاريخ',
+                        reset: 'إعادة تعيين',
+                        chartProjects: 'توزيع المركبات على المشاريع',
+                        chartValidity: 'حالة الصلاحية',
+                        chartMovements: 'حركات المركبات عبر الزمن',
+                        projectLocations: 'مواقع المشاريع',
+                        setLocations: 'تحديد مواقع المشاريع',
+                        mapHint: 'لإظهار المشاريع على الخريطة، حدّد إحداثيات كل مشروع عبر زر «تحديد مواقع المشاريع».'
                     },
                     settings: {
                         title: 'الإعدادات',
@@ -3957,8 +4020,23 @@
                         nearExpiry: 'Near Expiry',
                         totalVehicles: 'Total Vehicles',
                         quickActions: 'Quick Actions',
-                        exportReport: 'Export Tracking Report',
-                        showCharts: 'Show Charts'
+                        exportReport: 'Export',
+                        showCharts: 'Show Charts',
+                        viewBoard: 'Board',
+                        viewActivity: 'Activity Log',
+                        viewCharts: 'Charts',
+                        viewMap: 'Map',
+                        unassigned: 'Unassigned',
+                        activeVehicles: 'Active',
+                        fromDate: 'From Date',
+                        toDate: 'To Date',
+                        reset: 'Reset',
+                        chartProjects: 'Vehicles per Project',
+                        chartValidity: 'Validity Status',
+                        chartMovements: 'Vehicle Movements Over Time',
+                        projectLocations: 'Project Locations',
+                        setLocations: 'Set Project Locations',
+                        mapHint: 'To show projects on the map, set coordinates for each project via the "Set Project Locations" button.'
                     },
                     settings: {
                         title: 'Settings',
@@ -11109,190 +11187,531 @@
             loadAlertSettings();
         }
 
+        // ===== Vehicle & Project Tracking (rewritten) =====
+        let trackingRecordsCache = [];
+        let trackingKmCache = [];
+        let trackingProjectLocations = {};
+        let trackingCurrentView = 'board';
+        let trackingChartInstances = {};
+        let trackingMapInstance = null;
+        let trackingMapMarkersLayer = null;
+        let trackingDraggedVehicleId = null;
+        const TRACKING_UNASSIGNED = 'غير محدد';
+
+        function trkToDate(value) {
+            if (!value) return null;
+            try {
+                if (typeof value.toDate === 'function') return value.toDate();
+                const d = new Date(value);
+                return isNaN(d.getTime()) ? null : d;
+            } catch (e) { return null; }
+        }
+
+        function trkFormatDate(d) {
+            if (!d) return 'غير محدد';
+            return d.toLocaleDateString('en-GB', { year: 'numeric', month: '2-digit', day: '2-digit' });
+        }
+
+        function trkDaysSince(d) {
+            if (!d) return null;
+            const diff = Date.now() - d.getTime();
+            return Math.max(0, Math.floor(diff / 86400000));
+        }
+
+        // Fetch tracking data once, then render locally on every filter change
         async function loadTrackingPage() {
             const user = await getCurrentUser();
-            
             if (!user) return;
-            
+
             try {
-                const { collection, query, where, getDocs, orderBy } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
-                
-                // Load tracking records
-                let trackingRecords = [];
+                const { collection, query, where, getDocs } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+
+                // Movement records
+                trackingRecordsCache = [];
                 try {
-                    const trackingQuery = query(
-                        collection(window.firebaseDb, 'vehicleTracking'),
-                        where('userId', '==', user.uid),
-                        orderBy('changeDate', 'desc')
-                    );
-                    
-                    const trackingSnapshot = await getDocs(trackingQuery);
-                    trackingSnapshot.forEach(doc => {
-                        trackingRecords.push({
-                            id: doc.id,
-                            ...doc.data()
-                        });
+                    const snap = await getDocs(query(collection(window.firebaseDb, 'vehicleTracking'), where('userId', '==', user.uid)));
+                    snap.forEach(d => trackingRecordsCache.push({ id: d.id, ...d.data() }));
+                } catch (e) { console.log('No tracking records or index needed'); }
+
+                // Odometer readings (for unified activity feed)
+                trackingKmCache = [];
+                try {
+                    const snap = await getDocs(query(collection(window.firebaseDb, 'vehicleKilometers'), where('userId', '==', user.uid)));
+                    snap.forEach(d => trackingKmCache.push({ id: d.id, ...d.data() }));
+                } catch (e) { console.log('No km records'); }
+
+                // Project locations (for map view)
+                trackingProjectLocations = {};
+                try {
+                    const snap = await getDocs(collection(window.firebaseDb, 'projectLocations'));
+                    snap.forEach(d => {
+                        const data = d.data();
+                        if (data && data.userId === user.uid && data.project) {
+                            trackingProjectLocations[data.project] = { lat: data.lat, lng: data.lng };
+                        }
                     });
-                } catch (e) {
-                    console.log('No tracking records or index needed');
-                }
-                
-                // Ensure allVehicles is an array
-                if (!Array.isArray(allVehicles)) {
-                    console.error('allVehicles is not an array in loadTrackingPage');
-                    allVehicles = [];
-                }
-                
-                // Get unique projects and types from valid vehicles only
-                const validVehicles = allVehicles.filter(v => v && v.id);
-                const projects = [...new Set(validVehicles.map(v => v.currentProject).filter(p => p))];
-                const types = [...new Set(validVehicles.map(v => v.vehicleType).filter(t => t))];
-                
-                const projectFilter = document.getElementById('tracking-project-filter');
-                if (projectFilter) {
-                    projectFilter.innerHTML = '<option value="">كل المشاريع</option>' + 
-                        projects.map(p => `<option value="${escapeHtml(p)}">${escapeHtml(p)}</option>`).join('');
-                }
-                
-                const typeFilter = document.getElementById('tracking-type-filter');
-                if (typeFilter) {
-                    typeFilter.innerHTML = '<option value="">كل الأنواع</option>' + 
-                        types.map(t => `<option value="${escapeHtml(t)}">${escapeHtml(t)}</option>`).join('');
-                }
-                
-                // Filter vehicles by all filters
-                const projectFilterValue = document.getElementById('tracking-project-filter')?.value || '';
-                const validityFilterValue = document.getElementById('tracking-validity-filter')?.value || '';
-                const typeFilterValue = document.getElementById('tracking-type-filter')?.value || '';
-                const statusFilterValue = document.getElementById('tracking-status-filter')?.value || '';
-                
-                let filteredVehicles = validVehicles; // Start with valid vehicles only
-                if (projectFilterValue) {
-                    filteredVehicles = filteredVehicles.filter(v => v && v.currentProject === projectFilterValue);
-                }
-                if (validityFilterValue) {
-                    filteredVehicles = filteredVehicles.filter(v => v && v.annualValidityStatus === validityFilterValue);
-                }
-                if (typeFilterValue) {
-                    filteredVehicles = filteredVehicles.filter(v => v && v.vehicleType === typeFilterValue);
-                }
-                if (statusFilterValue) {
-                    filteredVehicles = filteredVehicles.filter(v => v && v.status === statusFilterValue);
-                }
-                
-                // Group by project
-                const byProject = {};
-                filteredVehicles.forEach(v => {
-                    const project = v.currentProject || 'غير محدد';
-                    if (!byProject[project]) {
-                        byProject[project] = [];
-                    }
-                    byProject[project].push(v);
-                });
-                
-                // Count statistics
-                const validAllVehicles = allVehicles.filter(v => v && v.id);
-                const expiredCount = validAllVehicles.filter(v => v.annualValidityStatus === 'نافذة').length;
-                const nearExpiryCount = validAllVehicles.filter(v => v.annualValidityStatus === 'قريب الانتهاء').length;
-                const totalVehicles = filteredVehicles.length;
-                const activeProjects = Object.keys(byProject).length;
-                
-                const totalProjectsEl = document.getElementById('tracking-total-projects');
-                const expiredValidityEl = document.getElementById('tracking-expired-validity');
-                const nearExpiryEl = document.getElementById('tracking-near-expiry');
-                const totalVehiclesEl = document.getElementById('tracking-total-vehicles');
-                
-                if (totalProjectsEl) totalProjectsEl.textContent = activeProjects;
-                if (expiredValidityEl) expiredValidityEl.textContent = expiredCount;
-                if (nearExpiryEl) nearExpiryEl.textContent = nearExpiryCount;
-                if (totalVehiclesEl) totalVehiclesEl.textContent = totalVehicles;
-                
-                // Display tracking content
-                const trackingContent = document.getElementById('tracking-content');
-                if (trackingContent) {
-                    trackingContent.innerHTML = `
-                        ${Object.keys(byProject).length > 0 ? Object.entries(byProject).map(([project, vehicles]) => `
-                            <div style="background: white; padding: 25px; border-radius: var(--border-radius); box-shadow: var(--shadow-sm); margin-bottom: 20px;">
-                                <h3 style="color: var(--text-dark); margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
-                                    <i class="fas fa-building" style="color: var(--primary-color);"></i> ${escapeHtml(project)}
-                                    <span style="background: var(--primary-color); color: white; padding: 4px 12px; border-radius: 20px; font-size: 14px;">${vehicles.length} مركبة</span>
-                                </h3>
-                                
-                                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px;">
-                                    ${vehicles.map(v => {
-                                        const validityColor = v.annualValidityStatus === 'نافذة' ? '#dc3545' : 
-                                                             v.annualValidityStatus === 'قريب الانتهاء' ? '#ffc107' : '#28a745';
-                                        return `
-                                            <div style="background: var(--light-bg); padding: 15px; border-radius: 8px; border-right: 4px solid ${validityColor};">
-                                                <div style="font-weight: bold; color: var(--text-dark); margin-bottom: 8px;">
-                                                    ${escapeHtml(v.vehicleNumber)} - ${escapeHtml(v.description || v.vehicleType || '')}
-                                                </div>
-                                                <div style="font-size: 13px; color: var(--text-light); margin-bottom: 5px;">
-                                                    <i class="fas fa-certificate"></i> الصلاحية: 
-                                                    <span style="color: ${validityColor}; font-weight: bold;">${escapeHtml(v.annualValidityStatus) || 'مستمرة'}</span>
-                                                </div>
-                                                ${v.annualExpiryDate ? `
-                                                    <div style="font-size: 12px; color: var(--text-muted);">
-                                                        <i class="fas fa-calendar"></i> انتهاء: ${escapeHtml(v.annualExpiryDate)}
-                                                    </div>
-                                                ` : ''}
-                                                <button onclick="editVehicle('${escapeJsString(v.id)}'); showPage('vehicles');" 
-                                                        style="margin-top: 10px; padding: 6px 12px; background: var(--primary-color); color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 12px; width: 100%;">
-                                                    <i class="fas fa-edit"></i> تعديل
-                                                </button>
-                                            </div>
-                                        `;
-                                    }).join('')}
-                                </div>
-                            </div>
-                        `).join('') : '<div style="text-align: center; padding: 40px; color: var(--text-light);">لا توجد مركبات في المشاريع المحددة</div>'}
-                        
-                        ${trackingRecords.length > 0 ? `
-                            <div style="background: white; padding: 25px; border-radius: var(--border-radius); box-shadow: var(--shadow-sm); margin-top: 20px;">
-                                <h3 style="color: var(--text-dark); margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
-                                    <i class="fas fa-history"></i> سجل حركات المركبات
-                                </h3>
-                                <div style="overflow-x: auto;">
-                                    <table style="width: 100%; border-collapse: collapse;">
-                                        <thead>
-                                            <tr style="background: var(--light-bg);">
-                                                <th style="padding: 12px; text-align: right; border-bottom: 2px solid var(--border-color);">المركبة</th>
-                                                <th style="padding: 12px; text-align: right; border-bottom: 2px solid var(--border-color);">من</th>
-                                                <th style="padding: 12px; text-align: right; border-bottom: 2px solid var(--border-color);">إلى</th>
-                                                <th style="padding: 12px; text-align: right; border-bottom: 2px solid var(--border-color);">التاريخ</th>
-                                                <th style="padding: 12px; text-align: right; border-bottom: 2px solid var(--border-color);">ملاحظات</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            ${trackingRecords.slice(0, 50).map(record => {
-                                                const date = record.changeDate?.toDate ? 
-                                                    record.changeDate.toDate().toLocaleDateString('en-GB', { year: 'numeric', month: '2-digit', day: '2-digit' }) : 
-                                                    'غير محدد';
-                                                return `
-                                                    <tr style="border-bottom: 1px solid var(--border-color);">
-                                                        <td style="padding: 10px;">${escapeHtml(record.vehicleNumber)}</td>
-                                                        <td style="padding: 10px;">${escapeHtml(record.fromProject)}</td>
-                                                        <td style="padding: 10px; font-weight: bold; color: var(--primary-color);">${escapeHtml(record.toProject)}</td>
-                                                        <td style="padding: 10px; color: var(--text-light);">${escapeHtml(date)}</td>
-                                                        <td style="padding: 10px; color: var(--text-light); font-size: 13px;">${escapeHtml(record.notes)}</td>
-                                                    </tr>
-                                                `;
-                                            }).join('')}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        ` : ''}
-                    `;
-                }
+                } catch (e) { console.log('No project locations'); }
             } catch (error) {
-                console.error('Error loading tracking:', error);
+                console.error('Error loading tracking data:', error);
                 showToast('حدث خطأ أثناء تحميل بيانات التتبع', 'error');
+            }
+
+            if (!Array.isArray(allVehicles)) allVehicles = [];
+            populateTrackingFilters();
+            renderTracking();
+        }
+
+        function populateTrackingFilters() {
+            const validVehicles = allVehicles.filter(v => v && v.id);
+            const projects = [...new Set(validVehicles.map(v => v.currentProject).filter(p => p))].sort();
+            const types = [...new Set(validVehicles.map(v => v.vehicleType).filter(tp => tp))].sort();
+
+            const projectFilter = document.getElementById('tracking-project-filter');
+            if (projectFilter) {
+                const cur = projectFilter.value;
+                projectFilter.innerHTML = '<option value="">كل المشاريع</option>' +
+                    projects.map(p => `<option value="${escapeHtml(p)}">${escapeHtml(p)}</option>`).join('');
+                if (cur && projects.includes(cur)) projectFilter.value = cur;
+            }
+            const typeFilter = document.getElementById('tracking-type-filter');
+            if (typeFilter) {
+                const cur = typeFilter.value;
+                typeFilter.innerHTML = '<option value="">كل الأنواع</option>' +
+                    types.map(tp => `<option value="${escapeHtml(tp)}">${escapeHtml(tp)}</option>`).join('');
+                if (cur && types.includes(cur)) typeFilter.value = cur;
             }
         }
 
-        function filterTracking() {
-            loadTrackingPage();
+        function getTrackingFilters() {
+            return {
+                search: (document.getElementById('trk-search')?.value || '').trim().toLowerCase(),
+                project: document.getElementById('tracking-project-filter')?.value || '',
+                type: document.getElementById('tracking-type-filter')?.value || '',
+                validity: document.getElementById('tracking-validity-filter')?.value || '',
+                status: document.getElementById('tracking-status-filter')?.value || '',
+                from: document.getElementById('trk-from-date')?.value || '',
+                to: document.getElementById('trk-to-date')?.value || ''
+            };
+        }
+
+        function getTrackingFilteredVehicles() {
+            const f = getTrackingFilters();
+            let list = allVehicles.filter(v => v && v.id);
+            if (f.project) list = list.filter(v => (v.currentProject || '') === f.project);
+            if (f.type) list = list.filter(v => v.vehicleType === f.type);
+            if (f.validity) list = list.filter(v => (v.annualValidityStatus || 'مستمرة') === f.validity);
+            if (f.status) list = list.filter(v => v.status === f.status);
+            if (f.search) {
+                list = list.filter(v => {
+                    const hay = [v.vehicleNumber, v.plateNumber, v.licensePlate, v.driverName, v.currentDriver, v.brand, v.model, v.description, v.currentProject]
+                        .filter(Boolean).join(' ').toLowerCase();
+                    return hay.includes(f.search);
+                });
+            }
+            return list;
+        }
+
+        // Master render — called on any filter change (no network)
+        function renderTracking() {
+            if (!Array.isArray(allVehicles)) allVehicles = [];
+            const filtered = getTrackingFilteredVehicles();
+            renderTrackingKPIs(filtered);
+            if (trackingCurrentView === 'board') renderTrackingBoard(filtered);
+            else if (trackingCurrentView === 'list') renderTrackingActivity(filtered);
+            else if (trackingCurrentView === 'charts') renderTrackingCharts(filtered);
+            else if (trackingCurrentView === 'map') renderTrackingMap(filtered);
+        }
+        function filterTracking() { renderTracking(); }
+
+        function renderTrackingKPIs(filtered) {
+            const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+            const projects = new Set(filtered.map(v => v.currentProject).filter(p => p));
+            set('kpi-total', filtered.length);
+            set('kpi-projects', projects.size);
+            set('kpi-unassigned', filtered.filter(v => !v.currentProject).length);
+            set('kpi-active', filtered.filter(v => v.status === 'سارية').length);
+            set('kpi-near', filtered.filter(v => v.annualValidityStatus === 'قريب الانتهاء').length);
+            set('kpi-expired', filtered.filter(v => v.annualValidityStatus === 'نافذة').length);
+        }
+
+        function trkLatestMoveDate(vehicle) {
+            // Determine when the vehicle arrived at its current project
+            const cur = vehicle.currentProject || '';
+            const moves = trackingRecordsCache
+                .filter(r => (r.vehicleId === vehicle.id || r.vehicleNumber === vehicle.vehicleNumber) && (r.toProject || '') === cur)
+                .map(r => trkToDate(r.changeDate))
+                .filter(Boolean)
+                .sort((a, b) => b - a);
+            if (moves.length) return moves[0];
+            return trkToDate(vehicle.projectStartDate) || trkToDate(vehicle.createdAt);
+        }
+
+        function renderTrackingBoard(filtered) {
+            const container = document.getElementById('trk-view-board');
+            if (!container) return;
+            const byProject = {};
+            filtered.forEach(v => {
+                const project = v.currentProject || TRACKING_UNASSIGNED;
+                (byProject[project] = byProject[project] || []).push(v);
+            });
+            const projectNames = Object.keys(byProject).sort((a, b) => {
+                if (a === TRACKING_UNASSIGNED) return 1;
+                if (b === TRACKING_UNASSIGNED) return -1;
+                return a.localeCompare(b, 'ar');
+            });
+
+            if (projectNames.length === 0) {
+                container.innerHTML = '<div class="trk-section" style="text-align:center; color:var(--text-light); padding:40px;">لا توجد مركبات مطابقة للفلاتر الحالية</div>';
+                return;
+            }
+
+            container.innerHTML = `
+                <p style="font-size:12.5px; color:var(--text-light); margin:0 0 12px;"><i class="fas fa-hand-pointer"></i> اسحب بطاقة مركبة وأفلتها في عمود مشروع آخر لإعادة تخصيصها.</p>
+                <div class="kanban">
+                    ${projectNames.map(project => {
+                        const vehicles = byProject[project];
+                        const expired = vehicles.filter(v => v.annualValidityStatus === 'نافذة').length;
+                        return `
+                        <div class="kanban-col" data-project="${escapeHtml(project)}"
+                             ondragover="trkDragOver(event)" ondragleave="trkDragLeave(event)" ondrop="trkDrop(event)">
+                            <h4>
+                                <span><i class="fas fa-building" style="color:var(--primary-color);"></i> ${escapeHtml(project)}</span>
+                                <span class="col-badge">${vehicles.length}</span>
+                            </h4>
+                            ${expired > 0 ? `<div style="font-size:11.5px; color:#dc3545; margin:-4px 0 8px;"><i class="fas fa-triangle-exclamation"></i> ${expired} منتهية الصلاحية</div>` : ''}
+                            ${vehicles.map(v => {
+                                const validityColor = v.annualValidityStatus === 'نافذة' ? '#dc3545' :
+                                                       v.annualValidityStatus === 'قريب الانتهاء' ? '#fd7e14' : '#1b8a52';
+                                const since = trkLatestMoveDate(v);
+                                const days = trkDaysSince(since);
+                                return `
+                                <div class="kanban-card" draggable="true" style="border-right-color:${validityColor};"
+                                     ondragstart="trkDragStart(event, '${escapeJsString(v.id)}')" ondragend="trkDragEnd(event)">
+                                    <div class="kc-title">${escapeHtml(v.vehicleNumber || '')}${v.plateNumber ? ' · ' + escapeHtml(v.plateNumber) : ''}</div>
+                                    <div class="kc-meta"><i class="fas fa-car"></i> ${escapeHtml(v.description || v.vehicleType || '—')}</div>
+                                    <div class="kc-meta"><i class="fas fa-certificate"></i> <span style="color:${validityColor}; font-weight:600;">${escapeHtml(v.annualValidityStatus || 'مستمرة')}</span></div>
+                                    ${days !== null ? `<div class="kc-meta"><i class="fas fa-clock"></i> منذ ${trkFormatDate(since)} (${days} يوم)</div>` : ''}
+                                    <button onclick="editVehicle('${escapeJsString(v.id)}'); showPage('vehicles');"
+                                            style="margin-top:8px; padding:5px 10px; background:transparent; color:var(--primary-color); border:1px solid var(--primary-color); border-radius:6px; cursor:pointer; font-size:11.5px; width:100%;">
+                                        <i class="fas fa-edit"></i> تعديل
+                                    </button>
+                                </div>`;
+                            }).join('')}
+                        </div>`;
+                    }).join('')}
+                </div>`;
+        }
+
+        // Drag & drop reassignment
+        function trkDragStart(event, vehicleId) {
+            trackingDraggedVehicleId = vehicleId;
+            event.dataTransfer.effectAllowed = 'move';
+            try { event.dataTransfer.setData('text/plain', vehicleId); } catch (e) {}
+            event.currentTarget.classList.add('dragging');
+        }
+        function trkDragEnd(event) {
+            event.currentTarget.classList.remove('dragging');
+        }
+        function trkDragOver(event) {
+            event.preventDefault();
+            event.dataTransfer.dropEffect = 'move';
+            event.currentTarget.classList.add('drag-over');
+        }
+        function trkDragLeave(event) {
+            event.currentTarget.classList.remove('drag-over');
+        }
+        function trkDrop(event) {
+            event.preventDefault();
+            const col = event.currentTarget;
+            col.classList.remove('drag-over');
+            const targetProject = col.getAttribute('data-project') || '';
+            const vehicleId = trackingDraggedVehicleId || (event.dataTransfer ? event.dataTransfer.getData('text/plain') : '');
+            trackingDraggedVehicleId = null;
+            if (vehicleId) reassignVehicleProject(vehicleId, targetProject === TRACKING_UNASSIGNED ? '' : targetProject);
+        }
+
+        async function reassignVehicleProject(vehicleId, newProject) {
+            const vehicle = allVehicles.find(v => v && v.id === vehicleId);
+            if (!vehicle) return;
+            const oldProject = vehicle.currentProject || '';
+            if (oldProject === newProject) return;
+
+            const user = await getCurrentUser();
+            if (!user) { showToast('يجب تسجيل الدخول', 'error'); return; }
+
+            try {
+                const { doc, updateDoc, addDoc, collection, serverTimestamp } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+                await updateDoc(doc(window.firebaseDb, 'vehicles', vehicleId), {
+                    currentProject: newProject,
+                    projectStartDate: serverTimestamp(),
+                    updatedAt: serverTimestamp()
+                });
+                let recId = null;
+                try {
+                    const ref = await addDoc(collection(window.firebaseDb, 'vehicleTracking'), {
+                        userId: user.uid,
+                        vehicleId: vehicleId,
+                        vehicleNumber: vehicle.vehicleNumber || '',
+                        fromProject: oldProject || TRACKING_UNASSIGNED,
+                        toProject: newProject || TRACKING_UNASSIGNED,
+                        notes: 'إعادة تخصيص عبر لوحة التتبع',
+                        changeDate: serverTimestamp()
+                    });
+                    recId = ref.id;
+                } catch (e) { console.warn('Could not write tracking record', e); }
+
+                vehicle.currentProject = newProject;
+                vehicle.projectStartDate = new Date();
+                trackingRecordsCache.unshift({
+                    id: recId || ('local-' + Date.now()),
+                    vehicleId: vehicleId,
+                    vehicleNumber: vehicle.vehicleNumber || '',
+                    fromProject: oldProject || TRACKING_UNASSIGNED,
+                    toProject: newProject || TRACKING_UNASSIGNED,
+                    notes: 'إعادة تخصيص عبر لوحة التتبع',
+                    changeDate: new Date()
+                });
+                showToast(`تم نقل ${vehicle.vehicleNumber || 'المركبة'} إلى ${newProject || TRACKING_UNASSIGNED}`, 'success');
+                populateTrackingFilters();
+                renderTracking();
+            } catch (error) {
+                console.error('reassign error', error);
+                showToast('تعذّر نقل المركبة', 'error');
+            }
+        }
+
+        // Unified activity feed (project moves + odometer readings)
+        function renderTrackingActivity(filtered) {
+            const container = document.getElementById('trk-view-list');
+            if (!container) return;
+            const f = getTrackingFilters();
+            const allowedIds = new Set(filtered.map(v => v.id));
+            const allowedNumbers = new Set(filtered.map(v => v.vehicleNumber).filter(Boolean));
+            const fromTs = f.from ? new Date(f.from + 'T00:00:00').getTime() : null;
+            const toTs = f.to ? new Date(f.to + 'T23:59:59').getTime() : null;
+
+            const events = [];
+            trackingRecordsCache.forEach(r => {
+                const d = trkToDate(r.changeDate);
+                events.push({
+                    date: d, type: 'move', vehicleNumber: r.vehicleNumber || '',
+                    vehicleId: r.vehicleId || '',
+                    detail: `${escapeHtml(r.fromProject || '—')} ← ${escapeHtml(r.toProject || '—')}`,
+                    icon: 'fa-right-left', color: 'var(--primary-color)',
+                    notes: r.notes || ''
+                });
+            });
+            trackingKmCache.forEach(r => {
+                const d = trkToDate(r.readingDate) || trkToDate(r.createdAt);
+                events.push({
+                    date: d, type: 'km', vehicleNumber: r.vehicleNumber || '',
+                    vehicleId: r.vehicleId || '',
+                    detail: `قراءة عداد: ${escapeHtml(String(r.kilometers ?? r.reading ?? '—'))} كم`,
+                    icon: 'fa-gauge-high', color: '#6f42c1',
+                    notes: r.notes || ''
+                });
+            });
+
+            let visible = events.filter(e => {
+                if (e.vehicleId && allowedIds.size && !allowedIds.has(e.vehicleId)) {
+                    if (!allowedNumbers.has(e.vehicleNumber)) return false;
+                } else if (!e.vehicleId && e.vehicleNumber && allowedNumbers.size && !allowedNumbers.has(e.vehicleNumber)) {
+                    return false;
+                }
+                if (fromTs && e.date && e.date.getTime() < fromTs) return false;
+                if (toTs && e.date && e.date.getTime() > toTs) return false;
+                if (f.search) {
+                    const hay = (e.vehicleNumber + ' ' + e.detail + ' ' + e.notes).toLowerCase();
+                    if (!hay.includes(f.search)) return false;
+                }
+                return true;
+            });
+            visible.sort((a, b) => (b.date ? b.date.getTime() : 0) - (a.date ? a.date.getTime() : 0));
+
+            if (visible.length === 0) {
+                container.innerHTML = '<div class="trk-section" style="text-align:center; color:var(--text-light); padding:40px;">لا توجد أنشطة مطابقة</div>';
+                return;
+            }
+
+            container.innerHTML = `
+                <div class="trk-section">
+                    <h3 style="margin:0 0 16px; font-size:15px; color:var(--text-dark);"><i class="fas fa-stream" style="color:var(--primary-color);"></i> سجل النشاط (${visible.length})</h3>
+                    <div style="overflow-x:auto;">
+                        <table class="trk-feed-table">
+                            <thead><tr><th>النوع</th><th>المركبة</th><th>التفاصيل</th><th>التاريخ</th><th>ملاحظات</th></tr></thead>
+                            <tbody>
+                                ${visible.slice(0, 200).map(e => `
+                                    <tr>
+                                        <td><i class="fas ${e.icon}" style="color:${e.color};"></i> ${e.type === 'move' ? 'نقل' : 'عداد'}</td>
+                                        <td style="font-weight:600;">${escapeHtml(e.vehicleNumber)}</td>
+                                        <td>${e.detail}</td>
+                                        <td style="color:var(--text-light);">${trkFormatDate(e.date)}</td>
+                                        <td style="color:var(--text-light); font-size:12.5px;">${escapeHtml(e.notes || '')}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>`;
+        }
+
+        // Real charts via Chart.js
+        function renderTrackingCharts(filtered) {
+            if (typeof Chart === 'undefined') { return; }
+            const palette = ['#4361ee', '#3a0ca3', '#7209b7', '#f72585', '#4cc9f0', '#4895ef', '#560bad', '#b5179e', '#f8961e', '#90be6d', '#577590', '#43aa8b'];
+
+            const byProject = {};
+            filtered.forEach(v => { const p = v.currentProject || TRACKING_UNASSIGNED; byProject[p] = (byProject[p] || 0) + 1; });
+            const validity = { 'مستمرة': 0, 'قريب الانتهاء': 0, 'نافذة': 0 };
+            filtered.forEach(v => { const s = v.annualValidityStatus || 'مستمرة'; validity[s] = (validity[s] || 0) + 1; });
+
+            const byMonth = {};
+            trackingRecordsCache.forEach(r => {
+                const d = trkToDate(r.changeDate);
+                if (!d) return;
+                const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+                byMonth[key] = (byMonth[key] || 0) + 1;
+            });
+            const monthKeys = Object.keys(byMonth).sort().slice(-12);
+
+            Object.values(trackingChartInstances).forEach(c => { try { c.destroy(); } catch (e) {} });
+            trackingChartInstances = {};
+
+            const cp = document.getElementById('chart-projects');
+            if (cp) trackingChartInstances.projects = new Chart(cp, {
+                type: 'bar',
+                data: { labels: Object.keys(byProject), datasets: [{ label: 'عدد المركبات', data: Object.values(byProject), backgroundColor: palette }] },
+                options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } }
+            });
+
+            const cv = document.getElementById('chart-validity');
+            if (cv) trackingChartInstances.validity = new Chart(cv, {
+                type: 'doughnut',
+                data: { labels: Object.keys(validity), datasets: [{ data: Object.values(validity), backgroundColor: ['#1b8a52', '#fd7e14', '#dc3545'] }] },
+                options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+            });
+
+            const cm = document.getElementById('chart-movements');
+            if (cm) trackingChartInstances.movements = new Chart(cm, {
+                type: 'line',
+                data: { labels: monthKeys, datasets: [{ label: 'عدد الحركات', data: monthKeys.map(k => byMonth[k]), borderColor: '#4361ee', backgroundColor: 'rgba(67,97,238,.15)', fill: true, tension: .3 }] },
+                options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } }
+            });
+        }
+
+        // Map view via Leaflet
+        function renderTrackingMap(filtered) {
+            if (typeof L === 'undefined') return;
+            const mapEl = document.getElementById('trk-map');
+            if (!mapEl) return;
+            if (!trackingMapInstance) {
+                trackingMapInstance = L.map('trk-map').setView([24.7136, 46.6753], 5); // default: Riyadh
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap', maxZoom: 19
+                }).addTo(trackingMapInstance);
+                trackingMapMarkersLayer = L.layerGroup().addTo(trackingMapInstance);
+            }
+            trackingMapMarkersLayer.clearLayers();
+
+            const byProject = {};
+            filtered.forEach(v => { const p = v.currentProject || TRACKING_UNASSIGNED; (byProject[p] = byProject[p] || []).push(v); });
+
+            const bounds = [];
+            Object.entries(byProject).forEach(([project, vehicles]) => {
+                const loc = trackingProjectLocations[project];
+                if (loc && typeof loc.lat === 'number' && typeof loc.lng === 'number') {
+                    const expired = vehicles.filter(v => v.annualValidityStatus === 'نافذة').length;
+                    const marker = L.marker([loc.lat, loc.lng]).bindPopup(
+                        `<b>${escapeHtml(project)}</b><br>عدد المركبات: ${vehicles.length}` + (expired ? `<br><span style="color:#dc3545;">منتهية: ${expired}</span>` : '')
+                    );
+                    trackingMapMarkersLayer.addLayer(marker);
+                    bounds.push([loc.lat, loc.lng]);
+                }
+            });
+            if (bounds.length) { try { trackingMapInstance.fitBounds(bounds, { padding: [40, 40], maxZoom: 12 }); } catch (e) {} }
+            setTimeout(() => { try { trackingMapInstance.invalidateSize(); } catch (e) {} }, 50);
+        }
+
+        function setTrackingView(view) {
+            trackingCurrentView = view;
+            document.querySelectorAll('.trk-tab').forEach(t => t.classList.toggle('active', t.getAttribute('data-view') === view));
+            ['board', 'list', 'charts', 'map'].forEach(v => {
+                const el = document.getElementById('trk-view-' + v);
+                if (el) el.style.display = (v === view) ? '' : 'none';
+            });
+            renderTracking();
+        }
+
+        function resetTrackingFilters() {
+            ['trk-search', 'tracking-project-filter', 'tracking-type-filter', 'tracking-validity-filter', 'tracking-status-filter', 'trk-from-date', 'trk-to-date']
+                .forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+            renderTracking();
+        }
+
+        // Project location manager (for the map)
+        async function openProjectLocationManager() {
+            const projects = [...new Set(allVehicles.filter(v => v && v.currentProject).map(v => v.currentProject))].sort();
+            if (projects.length === 0) { showToast('لا توجد مشاريع لتحديد مواقعها', 'info'); return; }
+
+            const existing = document.getElementById('project-location-modal');
+            if (existing) existing.remove();
+
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.id = 'project-location-modal';
+            modal.style.display = 'block';
+            modal.innerHTML = `
+                <div class="modal-content" style="max-width:560px;">
+                    <span class="close" onclick="this.closest('.modal').remove()">&times;</span>
+                    <h2 style="color:var(--primary-color); margin-bottom:8px;"><i class="fas fa-location-dot"></i> مواقع المشاريع</h2>
+                    <p style="font-size:12.5px; color:var(--text-light); margin-bottom:18px;">أدخل خط العرض (lat) وخط الطول (lng) لكل مشروع. يمكنك نسخهما من خرائط Google.</p>
+                    <div style="max-height:50vh; overflow-y:auto; display:flex; flex-direction:column; gap:12px;">
+                        ${projects.map(p => {
+                            const loc = trackingProjectLocations[p] || {};
+                            return `
+                            <div style="border:1px solid var(--border-light,#e9edf3); border-radius:10px; padding:12px;">
+                                <div style="font-weight:700; margin-bottom:8px; color:var(--text-dark);"><i class="fas fa-building" style="color:var(--primary-color);"></i> ${escapeHtml(p)}</div>
+                                <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                                    <input type="number" step="any" placeholder="lat" value="${loc.lat ?? ''}" data-loc-lat="${escapeHtml(p)}" style="flex:1; min-width:120px; padding:8px; border:1px solid var(--border-color,#d7dce3); border-radius:8px;">
+                                    <input type="number" step="any" placeholder="lng" value="${loc.lng ?? ''}" data-loc-lng="${escapeHtml(p)}" style="flex:1; min-width:120px; padding:8px; border:1px solid var(--border-color,#d7dce3); border-radius:8px;">
+                                </div>
+                            </div>`;
+                        }).join('')}
+                    </div>
+                    <button class="btn btn-primary" style="margin-top:18px; width:100%;" onclick="saveProjectLocations()"><i class="fas fa-save"></i> حفظ المواقع</button>
+                </div>`;
+            document.body.appendChild(modal);
+            modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
+        }
+
+        async function saveProjectLocations() {
+            const user = await getCurrentUser();
+            if (!user) { showToast('يجب تسجيل الدخول', 'error'); return; }
+            try {
+                const { doc, setDoc } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+                const latInputs = document.querySelectorAll('[data-loc-lat]');
+                let saved = 0;
+                for (const input of latInputs) {
+                    const project = input.getAttribute('data-loc-lat');
+                    const lngInput = document.querySelector(`[data-loc-lng="${CSS.escape(project)}"]`);
+                    const lat = parseFloat(input.value);
+                    const lng = lngInput ? parseFloat(lngInput.value) : NaN;
+                    if (!isNaN(lat) && !isNaN(lng)) {
+                        trackingProjectLocations[project] = { lat, lng };
+                        await setDoc(doc(window.firebaseDb, 'projectLocations', encodeURIComponent(project)), {
+                            userId: user.uid, project, lat, lng
+                        });
+                        saved++;
+                    }
+                }
+                showToast(`تم حفظ ${saved} موقعًا`, 'success');
+                const modal = document.getElementById('project-location-modal');
+                if (modal) modal.remove();
+                if (trackingCurrentView === 'map') renderTrackingMap(getTrackingFilteredVehicles());
+            } catch (error) {
+                console.error('save locations error', error);
+                showToast('تعذّر حفظ المواقع', 'error');
+            }
         }
 
         function showAddProjectModal() {
@@ -11308,29 +11727,19 @@
             }
         }
         
-        // Export tracking report
+        // Export tracking report — respects ALL active filters
         function exportTrackingReport() {
-            if (allVehicles.length === 0) {
-                showToast(t('messages.noVehiclesToExport'), 'error');
+            const filteredVehicles = getTrackingFilteredVehicles();
+            if (filteredVehicles.length === 0) {
+                showToast('لا توجد مركبات مطابقة للتصدير', 'error');
                 return;
             }
-            
-            const projectFilterValue = document.getElementById('tracking-project-filter')?.value || '';
-            const validityFilterValue = document.getElementById('tracking-validity-filter')?.value || '';
-            
-            let filteredVehicles = [...allVehicles];
-            if (projectFilterValue) {
-                filteredVehicles = filteredVehicles.filter(v => v.currentProject === projectFilterValue);
-            }
-            if (validityFilterValue) {
-                filteredVehicles = filteredVehicles.filter(v => v.annualValidityStatus === validityFilterValue);
-            }
-            
-            let csv = 'رقم المركبة,الوصف,نوع المركبة,الماركة,الموديل,المشروع,حالة الصلاحية,تاريخ انتهاء الصلاحية,الحالة\n';
-            
+
+            let csv = 'رقم المركبة,رقم اللوحة,الوصف,نوع المركبة,الماركة,الموديل,المشروع,حالة الصلاحية,تاريخ انتهاء الصلاحية,الحالة\n';
             filteredVehicles.forEach(vehicle => {
                 const row = [
                     vehicle.vehicleNumber || '',
+                    vehicle.plateNumber || vehicle.licensePlate || '',
                     vehicle.description || '',
                     vehicle.vehicleType || '',
                     vehicle.brand || '',
@@ -11339,103 +11748,26 @@
                     vehicle.annualValidityStatus || '',
                     vehicle.annualExpiryDate || '',
                     vehicle.status || ''
-                ].map(field => `"${field}"`).join(',');
-                
+                ].map(field => `"${String(field).replace(/"/g, '""')}"`).join(',');
                 csv += row + '\n';
             });
-            
+
             const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement('a');
             const url = URL.createObjectURL(blob);
-            
             link.setAttribute('href', url);
             link.setAttribute('download', `تقرير_التتبع_${new Date().toISOString().split('T')[0]}.csv`);
             link.style.visibility = 'hidden';
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-            
+            URL.revokeObjectURL(url);
             showToast('تم تصدير تقرير التتبع بنجاح', 'success');
         }
-        
-        // Show tracking charts
+
+        // Kept for backward compatibility: switch to the inline charts view
         function showTrackingChart() {
-            const byProject = {};
-            const byValidity = {};
-            
-            allVehicles.forEach(v => {
-                const project = v.currentProject || 'غير محدد';
-                byProject[project] = (byProject[project] || 0) + 1;
-                
-                const validity = v.annualValidityStatus || 'مستمرة';
-                byValidity[validity] = (byValidity[validity] || 0) + 1;
-            });
-            
-            const chartHtml = `
-                <div class="modal-content" style="max-width: 900px;">
-                    <span class="close" onclick="this.closest('.modal').style.display='none'">&times;</span>
-                    <h2 style="color: var(--primary-color); margin-bottom: 25px;">
-                        <i class="fas fa-chart-pie"></i> الرسوم البيانية للتتبع
-                    </h2>
-                    
-                    <div style="background: white; padding: 25px; border-radius: var(--border-radius); box-shadow: var(--shadow-sm); margin-bottom: 20px;">
-                        <h3 style="color: var(--text-dark); margin-bottom: 20px;">التوزيع حسب المشروع</h3>
-                        <div style="display: flex; flex-direction: column; gap: 12px;">
-                            ${Object.entries(byProject).map(([project, count]) => {
-                                const percentage = allVehicles.length > 0 ? ((count / allVehicles.length) * 100).toFixed(1) : 0;
-                                return `
-                                    <div>
-                                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                                            <span style="color: var(--text-dark); font-weight: 600;">${project}</span>
-                                            <span style="color: var(--text-light);">${count} (${percentage}%)</span>
-                                        </div>
-                                        <div style="background: var(--light-bg); height: 30px; border-radius: 15px; overflow: hidden; position: relative;">
-                                            <div style="background: var(--primary-gradient); height: 100%; width: ${percentage}%; transition: width 0.5s ease; border-radius: 15px; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: bold;">
-                                                ${percentage > 5 ? percentage + '%' : ''}
-                                            </div>
-                                        </div>
-                                    </div>
-                                `;
-                            }).join('')}
-                        </div>
-                    </div>
-                    
-                    <div style="background: white; padding: 25px; border-radius: var(--border-radius); box-shadow: var(--shadow-sm);">
-                        <h3 style="color: var(--text-dark); margin-bottom: 20px;">التوزيع حسب حالة الصلاحية</h3>
-                        <div style="display: flex; flex-direction: column; gap: 12px;">
-                            ${Object.entries(byValidity).map(([validity, count]) => {
-                                const percentage = allVehicles.length > 0 ? ((count / allVehicles.length) * 100).toFixed(1) : 0;
-                                const color = validity === 'نافذة' ? '#dc3545' : validity === 'قريب الانتهاء' ? '#ffc107' : '#28a745';
-                                return `
-                                    <div>
-                                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                                            <span style="color: var(--text-dark); font-weight: 600;">${validity}</span>
-                                            <span style="color: var(--text-light);">${count} (${percentage}%)</span>
-                                        </div>
-                                        <div style="background: var(--light-bg); height: 30px; border-radius: 15px; overflow: hidden; position: relative;">
-                                            <div style="background: ${color}; height: 100%; width: ${percentage}%; transition: width 0.5s ease; border-radius: 15px; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: bold;">
-                                                ${percentage > 5 ? percentage + '%' : ''}
-                                            </div>
-                                        </div>
-                                    </div>
-                                `;
-                            }).join('')}
-                        </div>
-                    </div>
-                </div>
-            `;
-            
-            const modal = document.createElement('div');
-            modal.className = 'modal';
-            modal.style.display = 'block';
-            modal.innerHTML = chartHtml;
-            document.body.appendChild(modal);
-            
-            modal.onclick = (e) => {
-                if (e.target === modal) {
-                    modal.remove();
-                }
-            };
+            setTrackingView('charts');
         }
 
         function showSettingsPage() {
@@ -11594,8 +11926,19 @@
         window.exportToPDF = exportToPDF;
         window.loadTrackingPage = loadTrackingPage;
         window.filterTracking = filterTracking;
+        window.renderTracking = renderTracking;
+        window.setTrackingView = setTrackingView;
+        window.resetTrackingFilters = resetTrackingFilters;
         window.exportTrackingReport = exportTrackingReport;
         window.showTrackingChart = showTrackingChart;
+        window.trkDragStart = trkDragStart;
+        window.trkDragEnd = trkDragEnd;
+        window.trkDragOver = trkDragOver;
+        window.trkDragLeave = trkDragLeave;
+        window.trkDrop = trkDrop;
+        window.reassignVehicleProject = reassignVehicleProject;
+        window.openProjectLocationManager = openProjectLocationManager;
+        window.saveProjectLocations = saveProjectLocations;
         window.loadVehicleKilometers = loadVehicleKilometers;
         window.showAddKilometerModal = showAddKilometerModal;
         window.addKilometerReading = addKilometerReading;
