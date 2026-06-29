@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>نظام جرد الآليات والمركبات</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Kinetic Velocity design fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
     
     <style>
         /* ========================================
@@ -35,6 +39,8 @@
             --gray-50: #f9fafb;
             --gray-100: #f3f4f6;
             --gray-200: #e5e7eb;
+            /* App canvas: soft neutral behind white cards for a layered, organized look */
+            --app-canvas: #eef1f7;
             
             /* Border & Dividers */
             --border-color: #e0e0e0;
@@ -85,8 +91,8 @@
             --spacing-2xl: 48px;
             
             /* Typography */
-            --font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Roboto', 'Helvetica Neue', Arial, sans-serif;
-            --font-mono: 'Courier New', monospace;
+            --font-family: 'Inter', 'Cairo', 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            --font-mono: 'JetBrains Mono', 'Courier New', monospace;
             
             /* Z-Index Scale */
             --z-dropdown: 1000;
@@ -99,43 +105,175 @@
             --z-loading: 2000;
         }
 
-        /* Dark Mode Variables */
+        /* ========================================
+           🌌 Kinetic Velocity — Dark Theme
+           High-tech glassmorphism palette
+           ======================================== */
         [data-theme="dark"] {
-            --light-bg: #1a1a1a;
-            --border-color: #333;
-            --text-dark: #e0e0e0;
-            --text-light: #b0b0b0;
-            --text-muted: #888;
-            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
-            --shadow-md: 0 5px 20px rgba(0, 0, 0, 0.4);
-            --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.5);
+            /* Kinetic surfaces */
+            --kv-surface: #0c141b;
+            --kv-surface-2: #0f0f1a;
+            --kv-container: #182127;
+            --kv-container-high: #222b32;
+            --kv-glass: rgba(24, 33, 39, 0.62);
+            --kv-glass-strong: rgba(15, 20, 27, 0.88);
+            --glass-border: rgba(255, 255, 255, 0.10);
+
+            /* Accents */
+            --primary-gradient: linear-gradient(135deg, #7189f6 0%, #5c3187 100%);
+            --primary-color: #b9c3ff;
+            --primary-dark: #7189f6;
+            --primary-light: #dde1ff;
+            --secondary-color: #dcb8ff;
+            --electric-blue: #00D4FF;
+            --energetic-orange: #FF8C42;
+
+            /* Mapped legacy variables */
+            --light-bg: #141d23;
+            --lighter-bg: #182127;
+            --white: #182127;
+            --gray-50: #141d23;
+            --gray-100: #182127;
+            --gray-200: #222b32;
+            --border-color: rgba(255, 255, 255, 0.10);
+            --border-light: rgba(255, 255, 255, 0.06);
+            --divider: rgba(255, 255, 255, 0.08);
+            --text-dark: #dbe4ed;
+            --text-body: #dbe4ed;
+            --text-light: #c5c5d5;
+            --text-muted: #8f909e;
+            --shadow-sm: 0 2px 12px rgba(0, 0, 0, 0.40);
+            --shadow-md: 0 6px 24px rgba(0, 0, 0, 0.50);
+            --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.60);
         }
 
-        [data-theme="dark"] body {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        [data-theme="dark"] body,
+        [data-theme="dark"] body.show-dashboard {
+            background:
+                radial-gradient(1200px 800px at 85% -10%, rgba(113, 137, 246, 0.14), transparent 60%),
+                radial-gradient(1000px 700px at 0% 110%, rgba(220, 184, 255, 0.10), transparent 55%),
+                linear-gradient(135deg, #0c141b 0%, #0f0f1a 100%);
+            background-attachment: fixed;
+            color: var(--text-body);
         }
 
-        [data-theme="dark"] .container,
+        /* Main chrome → translucent glass */
+        [data-theme="dark"] .container { background: transparent !important; }
+
         [data-theme="dark"] .content,
         [data-theme="dark"] .sidebar,
-        [data-theme="dark"] .modal-content {
-            background: #1e1e1e;
-            color: var(--text-dark);
-        }
-
+        [data-theme="dark"] .modal-content,
+        [data-theme="dark"] #vehicles-table-container,
         [data-theme="dark"] .vehicle-card,
-        [data-theme="dark"] .document-item {
-            background: #252525;
-            border-color: #333;
-        }
-
-        [data-theme="dark"] .form-group input,
-        [data-theme="dark"] .form-group textarea,
-        [data-theme="dark"] .form-group select {
-            background: #2a2a2a;
-            border-color: #333;
+        [data-theme="dark"] .document-item,
+        [data-theme="dark"] .settings-section {
+            background: var(--kv-glass) !important;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border) !important;
             color: var(--text-dark);
         }
+
+        [data-theme="dark"] .vehicle-card:hover,
+        [data-theme="dark"] .glass-card-hover:hover {
+            border-color: rgba(185, 195, 255, 0.30) !important;
+            box-shadow: 0 0 22px rgba(0, 212, 255, 0.16) !important;
+        }
+
+        /* Navigation tabs */
+        [data-theme="dark"] .nav-tabs {
+            background: var(--kv-glass-strong) !important;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--glass-border);
+        }
+        [data-theme="dark"] .nav-tab { color: var(--text-light); }
+        [data-theme="dark"] .nav-tab:hover,
+        [data-theme="dark"] .nav-tab.active {
+            color: var(--primary-color);
+            background: rgba(185, 195, 255, 0.08);
+        }
+        [data-theme="dark"] .nav-tab.active { border-bottom-color: var(--primary-color); }
+
+        /* Tables */
+        [data-theme="dark"] table { color: var(--text-dark); }
+        [data-theme="dark"] .vehicles-table td,
+        [data-theme="dark"] .vehicle-row { border-color: var(--glass-border) !important; }
+        [data-theme="dark"] .vehicle-row:hover td { background: rgba(185, 195, 255, 0.06) !important; }
+
+        /* Inputs → glass with focus glow */
+        [data-theme="dark"] input,
+        [data-theme="dark"] textarea,
+        [data-theme="dark"] select {
+            background: rgba(255, 255, 255, 0.04) !important;
+            border: 1px solid var(--glass-border) !important;
+            color: var(--text-dark) !important;
+        }
+        [data-theme="dark"] input::placeholder,
+        [data-theme="dark"] textarea::placeholder { color: var(--text-muted); }
+        [data-theme="dark"] input:focus,
+        [data-theme="dark"] textarea:focus,
+        [data-theme="dark"] select:focus {
+            border-color: var(--primary-color) !important;
+            box-shadow: 0 0 0 3px rgba(185, 195, 255, 0.18) !important;
+            outline: none;
+        }
+        [data-theme="dark"] select option { background: #182127; color: var(--text-dark); }
+
+        /* Convert hardcoded light surfaces (incl. JS-generated) → dark glass.
+           !important is required to override inline styles. Only substrings that
+           reliably denote a light *fill* are wiped (no border-only hexes here). */
+        [data-theme="dark"] [style*="background: white"],
+        [data-theme="dark"] [style*="background:#fff"],
+        [data-theme="dark"] [style*="background: #fff"],
+        [data-theme="dark"] [style*="background: #ffffff"],
+        [data-theme="dark"] [style*="#f8f9fa"],
+        [data-theme="dark"] [style*="#fafafa"],
+        [data-theme="dark"] [style*="#fafbfc"],
+        [data-theme="dark"] [style*="#f5f5f5"],
+        [data-theme="dark"] [style*="#fff3cd"],
+        [data-theme="dark"] [style*="#f9fafb"] {
+            background-color: var(--kv-container) !important;
+            background-image: none !important;
+            border-color: var(--glass-border) !important;
+        }
+
+        /* Normalize common light border colors → glass (border-color only, safe) */
+        [data-theme="dark"] [style*="#ddd"],
+        [data-theme="dark"] [style*="#e0e0e0"],
+        [data-theme="dark"] [style*="#dee2e6"],
+        [data-theme="dark"] [style*="#f0f0f0"],
+        [data-theme="dark"] [style*="#eee"] {
+            border-color: var(--glass-border) !important;
+        }
+
+        /* Convert hardcoded dark text → readable on dark */
+        [data-theme="dark"] [style*="color: #333"],
+        [data-theme="dark"] [style*="color:#333"],
+        [data-theme="dark"] [style*="color: #1a1a1a"],
+        [data-theme="dark"] [style*="color: #000"] { color: var(--text-dark) !important; }
+        [data-theme="dark"] [style*="color: #666"],
+        [data-theme="dark"] [style*="color:#666"],
+        [data-theme="dark"] [style*="color: #555"],
+        [data-theme="dark"] [style*="color: #777"],
+        [data-theme="dark"] [style*="color: #888"] { color: var(--text-light) !important; }
+
+        /* Primary buttons → luminous glow + rounded */
+        [data-theme="dark"] .btn-primary {
+            box-shadow: 0 0 18px rgba(113, 137, 246, 0.35);
+        }
+        [data-theme="dark"] .btn-primary:hover {
+            box-shadow: 0 0 26px rgba(113, 137, 246, 0.55);
+        }
+
+        /* User dropdown */
+        [data-theme="dark"] .user-dropdown { background: var(--kv-container-high); }
+        [data-theme="dark"] .user-dropdown a { color: var(--text-dark); }
+        [data-theme="dark"] .user-dropdown a:hover { background: rgba(255, 255, 255, 0.06); }
+
+        /* Monospaced numeric/label feel for stats */
+        [data-theme="dark"] .stat-value,
+        [data-theme="dark"] .stat-label { font-family: var(--font-mono); letter-spacing: 0.02em; }
 
         * {
             margin: 0;
@@ -167,8 +305,9 @@
         }
         
         body.show-dashboard {
-            background: var(--primary-gradient);
+            background: var(--app-canvas);
             background-attachment: fixed;
+            padding: 0;
         }
 
         /* ========================================
@@ -179,14 +318,13 @@
             width: 100%;
             margin: 0;
             padding: 0;
-            background: white;
+            background: var(--app-canvas);
             border-radius: 0;
             box-shadow: none;
             overflow: visible;
             position: relative;
             z-index: 1;
             animation: slideUp 0.6s var(--ease-out);
-            backdrop-filter: blur(10px);
         }
 
         @keyframes slideUp {
@@ -206,10 +344,10 @@
         header {
             background: var(--primary-gradient);
             color: white;
-            padding: 40px 35px;
+            padding: 24px 35px;
             position: relative;
             overflow: hidden;
-            box-shadow: inset 0 -2px 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 18px rgba(102, 126, 234, 0.25);
         }
 
         header::before {
@@ -232,16 +370,16 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             flex-wrap: wrap;
             gap: 20px;
         }
 
         header h1 {
-            font-size: 2.2em;
+            font-size: 1.7em;
             margin: 0;
             font-weight: 700;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            letter-spacing: -0.01em;
             display: flex;
             align-items: center;
             gap: 12px;
@@ -351,10 +489,14 @@
         .nav-tabs {
             display: flex;
             background: white;
-            border-bottom: 2px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
             padding: 0 30px;
             gap: 5px;
             overflow-x: auto;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            position: sticky;
+            top: 0;
+            z-index: 50;
         }
 
         .nav-tab {
@@ -577,8 +719,8 @@
         }
 
         .content {
-            padding: 15px 20px;
-            background: white;
+            padding: 24px 30px;
+            background: transparent;
             width: 100%;
             box-sizing: border-box;
         }
@@ -636,6 +778,165 @@
         .btn-advanced-search:hover {
             background: var(--secondary-color);
             transform: translateY(-50%) scale(1.05);
+        }
+
+        /* ===== Vehicles page toolbar (organized layout) ===== */
+        .vehicles-toolbar {
+            background: var(--white, #ffffff);
+            border: 1px solid var(--border-light, #e9edf3);
+            border-radius: 14px;
+            box-shadow: 0 1px 3px rgba(16, 24, 40, 0.06);
+            padding: 18px 20px;
+            margin-bottom: 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .vt-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .vt-title {
+            margin: 0;
+            font-size: 19px;
+            font-weight: 800;
+            color: var(--text-dark, #1f2937);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            white-space: nowrap;
+        }
+        .vt-title i { color: var(--primary-color, #667eea); }
+
+        .vt-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+        .vt-stat {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            border-radius: 12px;
+            background: var(--gray-50, #f7f8fb);
+            border: 1px solid var(--border-light, #e9edf3);
+            transition: box-shadow .2s, transform .2s;
+        }
+        .vt-stat:hover { box-shadow: 0 4px 14px rgba(16,24,40,.08); transform: translateY(-1px); }
+        .vt-ic {
+            width: 42px; height: 42px;
+            border-radius: 11px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px; color: #fff; flex-shrink: 0;
+        }
+        .vt-ic.total  { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .vt-ic.active { background: linear-gradient(135deg, #28a745 0%, #20c997 100%); }
+        .vt-ic.maint  { background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%); }
+        .vt-ic.exp    { background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); }
+        .vt-meta { display: flex; flex-direction: column; line-height: 1.1; }
+        .vt-num { font-size: 22px; font-weight: 800; color: var(--text-dark, #1f2937); }
+        .vt-lbl { font-size: 12px; color: var(--text-light, #6b7280); margin-top: 3px; }
+
+        .vt-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .vt-search {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+            flex: 1 1 320px;
+            min-width: 260px;
+        }
+        .vt-search .search-box {
+            position: relative;
+            flex: 1 1 200px;
+            min-width: 180px;
+        }
+        .vt-search .search-box i {
+            position: absolute; right: 12px; top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-light, #9aa3b2); font-size: 13px;
+        }
+        .vt-search .search-box input {
+            width: 100%;
+            padding: 10px 38px 10px 12px;
+            border: 1px solid var(--border-color, #d7dce3);
+            border-radius: 9px;
+            font-size: 13px;
+            background: var(--white, #fff);
+            transition: border-color .2s, box-shadow .2s;
+        }
+        .vt-search .search-box input:focus {
+            outline: none;
+            border-color: var(--primary-color, #667eea);
+            box-shadow: 0 0 0 3px rgba(102,126,234,.15);
+        }
+        .vt-select {
+            padding: 10px 12px;
+            border: 1px solid var(--border-color, #d7dce3);
+            border-radius: 9px;
+            font-size: 13px;
+            background: var(--white, #fff);
+            color: var(--text-dark, #1f2937);
+            cursor: pointer;
+            min-width: 140px;
+            transition: border-color .2s, box-shadow .2s;
+        }
+        .vt-select:focus {
+            outline: none;
+            border-color: var(--primary-color, #667eea);
+            box-shadow: 0 0 0 3px rgba(102,126,234,.15);
+        }
+        .vt-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+        }
+        .vt-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            padding: 10px 16px;
+            font-size: 13px;
+            font-weight: 600;
+            border: none;
+            border-radius: 9px;
+            cursor: pointer;
+            color: #fff;
+            white-space: nowrap;
+            transition: transform .15s, box-shadow .2s, filter .2s;
+        }
+        .vt-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(16,24,40,.15); filter: brightness(1.03); }
+        .vt-btn.primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .vt-btn.success { background: linear-gradient(135deg, #28a745 0%, #20c997 100%); }
+        .vt-btn.ghost {
+            background: var(--white, #fff);
+            color: var(--primary-color, #667eea);
+            border: 1px solid var(--border-color, #d7dce3);
+        }
+        .vt-btn.ghost:hover { background: var(--gray-50, #f7f8fb); }
+        .vt-btn.icon { padding: 10px 12px; }
+        .vt-btn.green-solid { background: #28a745; }
+        .vt-btn.red-solid { background: #dc3545; }
+
+        @media (max-width: 992px) {
+            .vt-stats { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 560px) {
+            .vt-stats { grid-template-columns: repeat(2, 1fr); }
+            .vt-controls { flex-direction: column; align-items: stretch; }
+            .vt-actions { justify-content: flex-start; }
         }
 
         .advanced-search-panel {
@@ -1725,49 +2026,106 @@
     </div>
     
     <!-- Login Modal -->
+    <style>
+        #login-modal .modal-content {
+            max-width: 420px;
+            border-radius: 18px;
+            padding: 36px 34px 30px;
+            box-shadow: 0 24px 60px rgba(16, 24, 40, 0.22);
+            border: 1px solid var(--border-light, #e9edf3);
+        }
+        #login-modal .login-badge {
+            width: 64px; height: 64px;
+            margin: 0 auto 16px;
+            border-radius: 18px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-size: 28px;
+            box-shadow: 0 10px 24px rgba(102, 126, 234, 0.4);
+        }
+        #login-modal .login-title { text-align: center; color: var(--text-dark, #1f2937); font-size: 22px; font-weight: 800; margin: 0 0 6px; }
+        #login-modal .login-subtitle { text-align: center; color: var(--text-light, #6b7280); font-size: 14px; margin: 0 0 26px; }
+        #login-modal .form-group { margin-bottom: 18px; }
+        #login-modal .form-group > label { display: block; font-size: 13px; font-weight: 600; color: var(--text-dark, #374151); margin-bottom: 7px; }
+        #login-modal .form-group input[type="email"],
+        #login-modal .form-group input[type="password"] {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid var(--border-color, #d7dce3);
+            border-radius: 11px;
+            font-size: 14px;
+            background: var(--white, #fff);
+            transition: border-color .2s, box-shadow .2s;
+            box-sizing: border-box;
+        }
+        #login-modal .form-group input:focus {
+            outline: none;
+            border-color: var(--primary-color, #667eea);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, .15);
+        }
+        #login-modal .forgot-link { display: inline-block; margin-top: 8px; font-size: 12.5px; color: var(--primary-color, #667eea); text-decoration: none; }
+        #login-modal .forgot-link:hover { text-decoration: underline; }
+        #login-modal .remember-row {
+            display: flex; align-items: center; gap: 9px;
+            margin-bottom: 22px;
+            font-size: 13px; color: var(--text-light, #555);
+        }
+        #login-modal .remember-row input { width: 17px; height: 17px; cursor: pointer; accent-color: var(--primary-color, #667eea); }
+        #login-modal .remember-row label { margin: 0; cursor: pointer; font-weight: normal; user-select: none; }
+        #login-modal .login-submit {
+            width: 100%;
+            padding: 13px;
+            border: none;
+            border-radius: 11px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform .15s, box-shadow .2s, filter .2s;
+        }
+        #login-modal .login-submit:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(102, 126, 234, .4); filter: brightness(1.03); }
+        #login-modal .login-divider { display: flex; align-items: center; gap: 12px; margin: 22px 0 16px; color: var(--text-light, #9aa3b2); font-size: 12px; }
+        #login-modal .login-divider::before, #login-modal .login-divider::after { content: ""; flex: 1; height: 1px; background: var(--border-light, #e9edf3); }
+        #login-modal .login-create {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color, #d7dce3);
+            border-radius: 11px;
+            background: var(--white, #fff);
+            color: var(--primary-color, #667eea);
+            font-size: 14px; font-weight: 600;
+            cursor: pointer;
+            transition: background .2s, border-color .2s;
+        }
+        #login-modal .login-create:hover { background: var(--gray-50, #f7f8fb); border-color: var(--primary-color, #667eea); }
+    </style>
     <div id="login-modal" class="modal" style="display: none;">
-        <div class="modal-content" style="max-width: 400px;">
+        <div class="modal-content">
             <span class="close" onclick="closeLoginModal()" style="display: none;">&times;</span>
-            <h2 style="text-align: center; color: #667eea; margin-bottom: 10px;"><i class="fas fa-car"></i> <span data-i18n="auth.login.title">نظام جرد المركبات</span></h2>
-            <p style="text-align: center; color: #666; margin-bottom: 25px;" data-i18n="auth.login.subtitle">سجّل الدخول للبدء</p>
-            <form id="login-form">
+            <div class="login-badge"><i class="fas fa-car"></i></div>
+            <h2 class="login-title" data-i18n="auth.login.title">نظام جرد المركبات</h2>
+            <p class="login-subtitle" data-i18n="auth.login.subtitle">سجّل الدخول للبدء</p>
+            <form id="login-form" autocomplete="on">
                 <div class="form-group">
                     <label data-i18n="auth.email">البريد الإلكتروني:</label>
-                    <input type="email" id="login-email" required>
+                    <input type="email" id="login-email" name="email" autocomplete="username" required>
                 </div>
                 <div class="form-group">
                     <label data-i18n="auth.password">كلمة المرور:</label>
-                    <input type="password" id="login-password" required>
-                    <small style="display: block; margin-top: 5px;">
-                        <a href="#" onclick="event.preventDefault(); showResetPassword(); return false;" style="color: #667eea; text-decoration: none;" data-i18n="auth.forgotPassword">
-                            نسيت كلمة المرور؟
-                        </a>
-                    </small>
+                    <input type="password" id="login-password" name="password" autocomplete="current-password" required>
+                    <a href="#" class="forgot-link" onclick="event.preventDefault(); showResetPassword(); return false;" data-i18n="auth.forgotPassword">نسيت كلمة المرور؟</a>
                 </div>
-                <div class="form-group">
-                    <label><i class="fas fa-database"></i> قاعدة البيانات:</label>
-                    <select id="database-select" required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; background: white;">
-                        <option value="">جاري التحميل...</option>
-                    </select>
-                    <button type="button" onclick="showDatabaseManager()" style="width: 100%; margin-top: 8px; padding: 8px; background: #6c757d; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 13px;">
-                        <i class="fas fa-cog"></i> إدارة قواعد البيانات
-                    </button>
-                </div>
-                <div class="form-group" style="display: flex; align-items: center; gap: 8px; margin-bottom: 20px; padding: 10px; background: #f8f9fa; border-radius: 8px;">
-                    <input type="checkbox" id="remember-me" style="width: auto; height: 18px; width: 18px; cursor: pointer; accent-color: #667eea;">
-                    <label for="remember-me" style="margin: 0; cursor: pointer; font-weight: normal; color: #555; user-select: none;">
-                        <i class="fas fa-bookmark" style="margin-left: 5px; color: #667eea;"></i> <span data-i18n="auth.rememberMe">تذكرني</span>
+                <div class="remember-row">
+                    <input type="checkbox" id="remember-me">
+                    <label for="remember-me">
+                        <i class="fas fa-bookmark" style="margin-left: 5px; color: var(--primary-color, #667eea);"></i> <span data-i18n="auth.rememberMe">تذكرني</span>
                     </label>
                 </div>
-                <button type="submit" class="btn btn-primary" data-i18n="auth.login.button">تسجيل الدخول</button>
+                <button type="submit" class="login-submit" data-i18n="auth.login.button">تسجيل الدخول</button>
             </form>
-            <div style="margin-top: 15px; text-align: center;">
-                <button type="button" class="btn btn-secondary" onclick="showRegisterForm()" style="width: 100%;" data-i18n="auth.register.createAccount">
-                    إنشاء حساب جديد
-                </button>
-            </div>
-            <div id="login-error" style="display:none; background:#fee; color:#c33; padding:15px; border-radius:8px; margin-top:15px; text-align:right; line-height:1.6; font-size:0.9em;"></div>
-            <div style="margin-top: 10px; text-align: center; font-size: 0.85em; color: #666;">
+            <div id="login-error" style="display:none; background:#fee; color:#c33; padding:13px 15px; border-radius:10px; margin-top:16px; text-align:right; line-height:1.6; font-size:0.9em;"></div>
+            <div style="margin-top: 12px; text-align: center; font-size: 0.82em; color: #9aa3b2;">
                 <small id="config-info"></small>
             </div>
         </div>
@@ -2048,108 +2406,90 @@
             <button class="nav-tab" onclick="showPage('profile')" id="tab-profile">
                 <i class="fas fa-user"></i> <span data-i18n="nav.profile">الملف الشخصي</span>
             </button>
+            <button class="nav-tab" onclick="showPage('users')" id="tab-users" style="display: none;">
+                <i class="fas fa-users-cog"></i> <span data-i18n="nav.users">إدارة المستخدمين</span>
+            </button>
         </div>
 
         <div class="main-content">
             <!-- Page: Vehicles -->
             <div id="page-vehicles" class="page-content active">
-                <main class="content" style="width: 100%; padding: 15px 20px; max-width: 100%; box-sizing: border-box;">
+                <main class="content" style="width: 100%; padding: 24px 30px; max-width: 100%; box-sizing: border-box;">
                     
-                    <!-- Top Control Bar: Everything in One Row -->
-                    <div style="background: white; padding: 12px 15px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); margin-bottom: 10px; display: grid; grid-template-columns: auto 1fr auto; gap: 15px; align-items: center;">
-                        <!-- Left: Title + Stats -->
-                        <div style="display: flex; align-items: center; gap: 15px;">
-                            <h2 style="margin: 0; font-size: 18px; font-weight: 700; color: var(--text-dark); display: flex; align-items: center; gap: 8px; white-space: nowrap;">
-                                <i class="fas fa-car" style="color: var(--primary-color);"></i>
+                    <!-- Vehicles toolbar: organized rows (title / stats / controls) -->
+                    <div class="vehicles-toolbar">
+                        <!-- Row 1: Title -->
+                        <div class="vt-header">
+                            <h2 class="vt-title">
+                                <i class="fas fa-car"></i>
                                 <span data-i18n="nav.vehicles">المركبات</span>
                             </h2>
-                            <div style="display: flex; gap: 10px; align-items: center;">
-                                <div style="text-align: center; padding: 6px 12px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 6px; min-width: 70px;">
-                                    <div style="font-size: 16px; font-weight: 700; line-height: 1.2;" id="quick-total-vehicles">0</div>
-                                    <div style="font-size: 10px; opacity: 0.9;" data-i18n="stats.total">إجمالي</div>
-                                </div>
-                                <div style="text-align: center; padding: 6px 12px; background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; border-radius: 6px; min-width: 70px;">
-                                    <div style="font-size: 16px; font-weight: 700; line-height: 1.2;" id="quick-active-vehicles">0</div>
-                                    <div style="font-size: 10px; opacity: 0.9;" data-i18n="stats.active">سارية</div>
-                                </div>
-                                <div style="text-align: center; padding: 6px 12px; background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%); color: white; border-radius: 6px; min-width: 70px;">
-                                    <div style="font-size: 16px; font-weight: 700; line-height: 1.2;" id="quick-maintenance-vehicles">0</div>
-                                    <div style="font-size: 10px; opacity: 0.9;" data-i18n="stats.maintenance">صيانة</div>
-                                </div>
-                                <div style="text-align: center; padding: 6px 12px; background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); color: white; border-radius: 6px; min-width: 70px;">
-                                    <div style="font-size: 16px; font-weight: 700; line-height: 1.2;" id="quick-expired-vehicles">0</div>
-                                    <div style="font-size: 10px; opacity: 0.9;" data-i18n="stats.expired">منتهية</div>
-                                </div>
-                            </div>
                         </div>
-                        
-                        <!-- Center: Search & Filters -->
-                        <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 8px; align-items: center;">
-                            <div class="search-box" style="position: relative; width: 100%;">
-                                <i class="fas fa-search" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); color: var(--text-light); font-size: 12px;"></i>
-                                <input type="text" id="search-input" data-i18n-placeholder="buttons.search" placeholder="ابحث..." style="width: 100%; padding: 8px 35px 8px 10px; border: 2px solid #e0e0e0; border-radius: 6px; font-size: 13px; transition: all 0.3s;">
-                            </div>
-                            <select id="status-filter" style="padding: 8px 25px 8px 10px; border: 2px solid #e0e0e0; border-radius: 6px; font-size: 12px; cursor: pointer; transition: all 0.3s;">
-                                <option value="" data-i18n="filters.allStatuses">كل الحالات</option>
-                            </select>
-                            <select id="type-filter" style="padding: 8px 25px 8px 10px; border: 2px solid #e0e0e0; border-radius: 6px; font-size: 12px; cursor: pointer; transition: all 0.3s;">
-                                <option value="" data-i18n="filters.allTypes">كل الأنواع</option>
-                            </select>
-                        </div>
-                        
-                        <!-- Right: Action Buttons -->
-                        <div style="display: flex; gap: 6px; align-items: center;">
-                            <button onclick="openVehicleFormModal()" class="btn btn-primary" style="padding: 8px 16px; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 6px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 6px; cursor: pointer; transition: all 0.3s; white-space: nowrap;">
-                                <i class="fas fa-plus-circle"></i>
-                                <span data-i18n="buttons.add">إضافة</span>
-                            </button>
-                            <button class="btn-advanced-search" onclick="toggleAdvancedSearch()" data-i18n-title="buttons.advancedSearch" title="بحث متقدم" style="padding: 8px 14px; background: var(--primary-color); color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 12px; transition: all 0.3s; display: flex; align-items: center; gap: 6px; white-space: nowrap;">
-                                <i class="fas fa-sliders-h"></i>
-                                <span data-i18n="buttons.advancedSearch">بحث متقدم</span>
-                            </button>
-                            <button onclick="openBulkImportModal()" class="btn btn-primary" style="padding: 8px 16px; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 6px; background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; border: none; border-radius: 6px; cursor: pointer; transition: all 0.3s; white-space: nowrap;">
-                                <i class="fas fa-file-excel"></i>
-                                <span data-i18n="buttons.bulkAdd">إضافة متعددة</span>
-                            </button>
-                            <button onclick="exportToExcel()" title="Excel" style="padding: 8px 10px; background: #28a745; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 12px; transition: all 0.3s;">
-                                <i class="fas fa-file-excel"></i>
-                            </button>
-                            <button onclick="exportToPDF()" title="PDF" style="padding: 8px 10px; background: #dc3545; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 12px; transition: all 0.3s;">
-                                <i class="fas fa-file-pdf"></i>
-                            </button>
-                        </div>
-                    </div>
 
-                <!-- Advanced Search Panel -->
-                <div id="advanced-search-panel" class="advanced-search-panel" style="display: none;">
-                    <div style="background: white; padding: 30px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 20px;">
-                        <h3 style="margin-bottom: 20px; color: var(--text-dark); font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 10px;">
-                            <i class="fas fa-filter" style="color: var(--primary-color);"></i> <span data-i18n="buttons.advancedSearch">بحث متقدم</span>
-                        </h3>
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
-                            <div class="form-group" style="margin-bottom: 0;">
-                                <label style="font-size: 14px; font-weight: 600; margin-bottom: 8px; display: block;" data-i18n="advancedSearch.brand">الماركة:</label>
-                                <input type="text" id="advanced-brand" data-i18n-placeholder="advancedSearch.brandPlaceholder" placeholder="ابحث بالماركة" style="width: 100%; padding: 12px 15px; font-size: 14px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                        <!-- Row 2: Quick stats -->
+                        <div class="vt-stats">
+                            <div class="vt-stat">
+                                <div class="vt-ic total"><i class="fas fa-car-side"></i></div>
+                                <div class="vt-meta">
+                                    <span class="vt-num" id="quick-total-vehicles">0</span>
+                                    <span class="vt-lbl" data-i18n="stats.total">إجمالي</span>
+                                </div>
                             </div>
-                            <div class="form-group" style="margin-bottom: 0;">
-                                <label style="font-size: 14px; font-weight: 600; margin-bottom: 8px; display: block;" data-i18n="advancedSearch.model">الموديل:</label>
-                                <input type="text" id="advanced-model" data-i18n-placeholder="advancedSearch.modelPlaceholder" placeholder="ابحث بالموديل" style="width: 100%; padding: 12px 15px; font-size: 14px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                            <div class="vt-stat">
+                                <div class="vt-ic active"><i class="fas fa-check-circle"></i></div>
+                                <div class="vt-meta">
+                                    <span class="vt-num" id="quick-active-vehicles">0</span>
+                                    <span class="vt-lbl" data-i18n="stats.active">سارية</span>
+                                </div>
                             </div>
-                            <div class="form-group" style="margin-bottom: 0;">
-                                <label style="font-size: 14px; font-weight: 600; margin-bottom: 8px; display: block;" data-i18n="advancedSearch.color">اللون:</label>
-                                <input type="text" id="advanced-color" data-i18n-placeholder="advancedSearch.colorPlaceholder" placeholder="ابحث باللون" style="width: 100%; padding: 12px 15px; font-size: 14px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                            <div class="vt-stat">
+                                <div class="vt-ic maint"><i class="fas fa-wrench"></i></div>
+                                <div class="vt-meta">
+                                    <span class="vt-num" id="quick-maintenance-vehicles">0</span>
+                                    <span class="vt-lbl" data-i18n="stats.maintenance">صيانة</span>
+                                </div>
+                            </div>
+                            <div class="vt-stat">
+                                <div class="vt-ic exp"><i class="fas fa-triangle-exclamation"></i></div>
+                                <div class="vt-meta">
+                                    <span class="vt-num" id="quick-expired-vehicles">0</span>
+                                    <span class="vt-lbl" data-i18n="stats.expired">منتهية</span>
+                                </div>
                             </div>
                         </div>
-                        <div style="margin-top: 25px; display: flex; gap: 12px;">
-                            <button class="btn btn-primary" onclick="applyAdvancedSearch()" style="padding: 12px 24px; font-size: 14px; font-weight: 600; border-radius: 8px;">
-                                <i class="fas fa-search"></i> <span data-i18n="advancedSearch.apply">تطبيق البحث</span>
-                            </button>
-                            <button class="btn btn-secondary" onclick="clearAdvancedSearch()" style="padding: 12px 24px; font-size: 14px; font-weight: 600; border-radius: 8px;">
-                                <i class="fas fa-times"></i> <span data-i18n="advancedSearch.clear">مسح</span>
-                            </button>
+
+                        <!-- Row 3: Search + filters + actions -->
+                        <div class="vt-controls">
+                            <div class="vt-search">
+                                <div class="search-box">
+                                    <i class="fas fa-search"></i>
+                                    <input type="text" id="search-input" data-i18n-placeholder="buttons.search" placeholder="ابحث برقم اللوحة، رقم المركبة، الماركة، السائق..." oninput="onSearchInput(this.value)">
+                                </div>
+                                <select id="status-filter" class="vt-select" onchange="onStatusFilterChange(this.value)">
+                                    <option value="" data-i18n="filters.allStatuses">كل الحالات</option>
+                                </select>
+                                <select id="type-filter" class="vt-select" onchange="onTypeFilterChange(this.value)">
+                                    <option value="" data-i18n="filters.allTypes">كل الأنواع</option>
+                                </select>
+                            </div>
+                            <div class="vt-actions">
+                                <button onclick="openVehicleFormModal()" class="vt-btn primary">
+                                    <i class="fas fa-plus-circle"></i>
+                                    <span data-i18n="buttons.add">إضافة</span>
+                                </button>
+                                <button onclick="openBulkImportModal()" class="vt-btn success">
+                                    <i class="fas fa-file-excel"></i>
+                                    <span data-i18n="buttons.bulkAdd">إضافة متعددة</span>
+                                </button>
+                                <button onclick="exportToExcel()" class="vt-btn green-solid icon" title="Excel">
+                                    <i class="fas fa-file-excel"></i>
+                                </button>
+                                <button onclick="exportToPDF()" class="vt-btn red-solid icon" title="PDF">
+                                    <i class="fas fa-file-pdf"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>
 
                 <!-- Bulk Import Modal -->
                 <div id="bulk-import-modal" class="modal" style="display: none;">
@@ -2240,7 +2580,7 @@
                 </div>
 
                 <!-- Vehicles Table Container -->
-                <div id="vehicles-table-container" style="background: white; border-radius: 10px; box-shadow: 0 3px 10px rgba(0,0,0,0.1); overflow: visible; max-height: calc(100vh - 300px); display: flex; flex-direction: column; min-height: 500px;">
+                <div id="vehicles-table-container" style="background: white; border: 1px solid var(--border-light, #e9edf3); border-radius: 14px; box-shadow: 0 1px 3px rgba(16, 24, 40, 0.06); overflow: hidden; max-height: calc(100vh - 300px); display: flex; flex-direction: column; min-height: 500px;">
                     <div id="vehicles-table-wrapper" style="overflow-y: auto; overflow-x: auto; flex: 1; -webkit-overflow-scrolling: touch; max-height: calc(100vh - 300px); min-height: 400px; position: relative;">
                         <table id="vehicles-table" class="vehicles-table" style="width: 100%; border-collapse: collapse; table-layout: auto;">
                             <thead style="position: sticky; top: 0; z-index: 100; background: white;">
@@ -2631,6 +2971,118 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Page: User Management -->
+            <div id="page-users" class="page-content">
+                <div style="padding: 30px; max-width: 1000px; margin: 0 auto;">
+                    <h2 style="margin-bottom: 25px; color: var(--text-dark); display: flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-users-cog" style="color: var(--primary-color);"></i> <span data-i18n="pages.users.title">إدارة المستخدمين</span>
+                    </h2>
+
+                    <!-- Locked view: requires admin code -->
+                    <div id="users-locked" style="background: white; padding: 40px 30px; border-radius: 14px; border: 1px solid var(--border-light, #e9edf3); box-shadow: 0 1px 3px rgba(16,24,40,0.06); max-width: 460px; margin: 0 auto; text-align: center;">
+                        <div style="width: 64px; height: 64px; margin: 0 auto 18px; border-radius: 16px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 26px;">
+                            <i class="fas fa-lock"></i>
+                        </div>
+                        <h3 style="margin: 0 0 8px; color: var(--text-dark);" data-i18n="pages.users.lockedTitle">قسم محمي</h3>
+                        <p style="color: var(--text-light); margin: 0 0 20px; font-size: 14px;" data-i18n="pages.users.lockedDesc">أدخل رمز المسؤول للوصول إلى إدارة المستخدمين</p>
+                        <div class="form-group" style="text-align: right;">
+                            <label data-i18n="pages.users.adminCode">رمز المسؤول:</label>
+                            <input type="password" id="users-access-code" autocomplete="off" onkeydown="if(event.key==='Enter'){event.preventDefault();verifyUsersAccess();}" style="width: 100%; padding: 12px 14px; border: 1px solid var(--border-color, #d7dce3); border-radius: 11px; font-size: 14px; box-sizing: border-box;">
+                        </div>
+                        <button type="button" onclick="verifyUsersAccess()" class="btn btn-primary" style="width: 100%; padding: 12px; border-radius: 11px; margin-top: 6px;">
+                            <i class="fas fa-unlock"></i> <span data-i18n="pages.users.unlock">دخول</span>
+                        </button>
+                        <div id="users-access-error" style="display:none; color:#c33; font-size:13px; margin-top:12px;"></div>
+                    </div>
+
+                    <!-- Unlocked content -->
+                    <div id="users-content" style="display: none;">
+                        <!-- Users list card -->
+                        <div style="background: white; padding: 22px 24px; border-radius: 14px; border: 1px solid var(--border-light, #e9edf3); box-shadow: 0 1px 3px rgba(16,24,40,0.06);">
+                            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
+                                <h3 style="margin: 0; color: var(--text-dark); font-size: 17px; display: flex; align-items: center; gap: 9px;">
+                                    <i class="fas fa-users" style="color: var(--primary-color);"></i> <span data-i18n="pages.users.listTitle">المستخدمون</span>
+                                </h3>
+                                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                                    <button type="button" onclick="loadUsersList()" class="btn btn-secondary" style="padding: 8px 16px; border-radius: 9px; font-size: 13px;">
+                                        <i class="fas fa-sync-alt"></i> <span data-i18n="pages.users.refresh">تحديث</span>
+                                    </button>
+                                    <button type="button" onclick="openUserFormModal()" class="btn btn-primary" style="padding: 8px 18px; border-radius: 9px; font-size: 13px; font-weight: 600;">
+                                        <i class="fas fa-user-plus"></i> <span data-i18n="pages.users.addTitle">إضافة مستخدم جديد</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <div style="overflow-x: auto;">
+                                <table style="width: 100%; border-collapse: collapse;">
+                                    <thead>
+                                        <tr style="background: var(--gray-50, #f7f8fb); text-align: right;">
+                                            <th style="padding: 12px 14px; font-size: 13px; font-weight: 700; color: var(--text-dark); border-bottom: 1px solid var(--border-light, #e9edf3);" data-i18n="auth.name">الاسم</th>
+                                            <th style="padding: 12px 14px; font-size: 13px; font-weight: 700; color: var(--text-dark); border-bottom: 1px solid var(--border-light, #e9edf3);" data-i18n="auth.email">البريد الإلكتروني</th>
+                                            <th style="padding: 12px 14px; font-size: 13px; font-weight: 700; color: var(--text-dark); border-bottom: 1px solid var(--border-light, #e9edf3);" data-i18n="pages.users.role">الصلاحية</th>
+                                            <th style="padding: 12px 14px; font-size: 13px; font-weight: 700; color: var(--text-dark); border-bottom: 1px solid var(--border-light, #e9edf3);" data-i18n="pages.users.createdAt">تاريخ الإضافة</th>
+                                            <th style="padding: 12px 14px; font-size: 13px; font-weight: 700; color: var(--text-dark); border-bottom: 1px solid var(--border-light, #e9edf3); text-align: center;" data-i18n="table.actions">الإجراءات</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="users-table-body">
+                                        <!-- User rows loaded here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div id="users-empty" style="display: none; text-align: center; padding: 36px 20px; color: var(--text-light);">
+                                <i class="fas fa-users" style="font-size: 42px; opacity: 0.4; margin-bottom: 12px;"></i>
+                                <p style="margin: 0;" data-i18n="pages.users.empty">لا يوجد مستخدمون مسجّلون في القائمة بعد</p>
+                            </div>
+                            <p style="margin: 16px 0 0; font-size: 12px; color: var(--text-light); line-height: 1.7;" data-i18n="pages.users.note">
+                                ملاحظة: الحذف من هنا يزيل المستخدم من هذه القائمة فقط ولا يحذف حساب الدخول نهائيًا من Firebase (يتطلب صلاحيات إدارية من لوحة Firebase).
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add / Edit User Modal -->
+    <div id="user-form-modal" class="modal">
+        <div class="modal-content" style="max-width: 480px;">
+            <span class="close" onclick="closeUserFormModal()">&times;</span>
+            <h2 id="user-form-title" style="color: var(--primary-color); margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                <i class="fas fa-user-plus"></i> <span data-i18n="pages.users.addTitle">إضافة مستخدم جديد</span>
+            </h2>
+            <form id="user-form" onsubmit="saveUser(event)">
+                <input type="hidden" id="user-form-id">
+                <div class="form-group">
+                    <label data-i18n="auth.name">الاسم:</label>
+                    <input type="text" id="user-form-name" required style="width: 100%; padding: 11px 13px; border: 1px solid var(--border-color, #d7dce3); border-radius: 10px; font-size: 14px; box-sizing: border-box;">
+                </div>
+                <div class="form-group">
+                    <label data-i18n="auth.email">البريد الإلكتروني:</label>
+                    <input type="email" id="user-form-email" required autocomplete="off" style="width: 100%; padding: 11px 13px; border: 1px solid var(--border-color, #d7dce3); border-radius: 10px; font-size: 14px; box-sizing: border-box;">
+                    <small id="user-form-email-hint" style="display:none; color: var(--text-light); font-size: 12px; margin-top: 5px;" data-i18n="pages.users.emailLocked">لا يمكن تغيير البريد الإلكتروني لحساب موجود</small>
+                </div>
+                <div class="form-group" id="user-form-password-group">
+                    <label data-i18n="auth.password">كلمة المرور:</label>
+                    <input type="password" id="user-form-password" minlength="6" autocomplete="new-password" style="width: 100%; padding: 11px 13px; border: 1px solid var(--border-color, #d7dce3); border-radius: 10px; font-size: 14px; box-sizing: border-box;">
+                    <small style="color: var(--text-light); font-size: 12px; margin-top: 5px; display: block;" data-i18n="pages.users.passwordHint">كلمة المرور 6 أحرف على الأقل</small>
+                </div>
+                <div class="form-group">
+                    <label data-i18n="pages.users.role">الصلاحية:</label>
+                    <select id="user-form-role" style="width: 100%; padding: 11px 13px; border: 1px solid var(--border-color, #d7dce3); border-radius: 10px; font-size: 14px; background: white; box-sizing: border-box;">
+                        <option value="user" data-i18n="pages.users.roleUser">مستخدم</option>
+                        <option value="admin" data-i18n="pages.users.roleAdmin">مسؤول</option>
+                    </select>
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 22px;">
+                    <button type="submit" id="user-form-submit" class="btn btn-primary" style="flex: 1; padding: 12px; border-radius: 10px; font-weight: 600;">
+                        <i class="fas fa-save"></i> <span data-i18n="buttons.save">حفظ</span>
+                    </button>
+                    <button type="button" onclick="closeUserFormModal()" class="btn btn-secondary" style="padding: 12px 20px; border-radius: 10px;">
+                        <span data-i18n="buttons.cancel">إلغاء</span>
+                    </button>
+                </div>
+                <div id="user-form-error" style="display:none; background:#fee; color:#c33; padding:12px 14px; border-radius:10px; margin-top:14px; text-align:right; line-height:1.6; font-size:0.9em;"></div>
+            </form>
         </div>
     </div>
 
@@ -3044,7 +3496,7 @@
     <div id="toast" class="toast"></div>
 
     <script type="module">
-        // Load theme immediately
+        // Load theme immediately (light professional theme by default)
         (function() {
             const savedTheme = localStorage.getItem('theme') || 'light';
             document.documentElement.setAttribute('data-theme', savedTheme);
@@ -3081,6 +3533,7 @@
                     tracking: 'تتبع المركبات والمشاريع',
                     settings: 'الإعدادات',
                     profile: 'الملف الشخصي',
+                    users: 'إدارة المستخدمين',
                     logout: 'تسجيل الخروج'
                 },
                 stats: {
@@ -3097,7 +3550,7 @@
                     delete: 'حذف',
                     edit: 'تعديل',
                     add: 'إضافة',
-                    search: 'ابحث...',
+                    search: 'ابحث برقم اللوحة، رقم المركبة، الماركة، السائق...',
                     export: 'تصدير',
                     print: 'طباعة',
                     close: 'إغلاق',
@@ -3240,6 +3693,25 @@
                         title: 'الملف الشخصي',
                         email: 'البريد الإلكتروني:',
                         registrationDate: 'تاريخ التسجيل:'
+                    },
+                    users: {
+                        title: 'إدارة المستخدمين',
+                        lockedTitle: 'قسم محمي',
+                        lockedDesc: 'أدخل رمز المسؤول للوصول إلى إدارة المستخدمين',
+                        adminCode: 'رمز المسؤول:',
+                        unlock: 'دخول',
+                        addTitle: 'إضافة مستخدم جديد',
+                        role: 'الصلاحية:',
+                        roleUser: 'مستخدم',
+                        roleAdmin: 'مسؤول',
+                        addButton: 'إضافة المستخدم',
+                        emailLocked: 'لا يمكن تغيير البريد الإلكتروني لحساب موجود',
+                        passwordHint: 'كلمة المرور 6 أحرف على الأقل',
+                        listTitle: 'المستخدمون',
+                        refresh: 'تحديث',
+                        createdAt: 'تاريخ الإضافة',
+                        empty: 'لا يوجد مستخدمون مسجّلون في القائمة بعد',
+                        note: 'ملاحظة: الحذف من هنا يزيل المستخدم من هذه القائمة فقط ولا يحذف حساب الدخول نهائيًا من Firebase (يتطلب صلاحيات إدارية من لوحة Firebase).'
                     }
                 },
                 vehicleForm: {
@@ -3361,6 +3833,7 @@
                 nav: {
                     reports: 'Reports',
                     vehicles: 'Vehicles',
+                    users: 'User Management',
                     tracking: 'Tracking',
                     settings: 'Settings',
                     profile: 'Profile',
@@ -3380,7 +3853,7 @@
                     delete: 'Delete',
                     edit: 'Edit',
                     add: 'Add',
-                    search: 'Search...',
+                    search: 'Search by plate, number, brand, driver...',
                     export: 'Export',
                     print: 'Print',
                     close: 'Close',
@@ -3523,6 +3996,25 @@
                         title: 'Profile',
                         email: 'Email:',
                         registrationDate: 'Registration Date:'
+                    },
+                    users: {
+                        title: 'User Management',
+                        lockedTitle: 'Protected Section',
+                        lockedDesc: 'Enter the admin code to access user management',
+                        adminCode: 'Admin Code:',
+                        unlock: 'Enter',
+                        addTitle: 'Add New User',
+                        role: 'Role:',
+                        roleUser: 'User',
+                        roleAdmin: 'Admin',
+                        addButton: 'Add User',
+                        emailLocked: 'Email cannot be changed for an existing account',
+                        passwordHint: 'Password must be at least 6 characters',
+                        listTitle: 'Users',
+                        refresh: 'Refresh',
+                        createdAt: 'Created At',
+                        empty: 'No users added to the list yet',
+                        note: 'Note: Deleting here only removes the user from this list and does not permanently delete the login account from Firebase (requires admin privileges from the Firebase console).'
                     }
                 },
                 vehicleForm: {
@@ -3638,6 +4130,50 @@
             }
         };
         
+        // Security: escape user-controlled values before inserting into innerHTML
+        // Escapes the 5 HTML-sensitive characters so the value is safe in both
+        // text and attribute (double/single quoted) contexts.
+        function escapeHtml(value) {
+            if (value === null || value === undefined) return '';
+            return String(value)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+        window.escapeHtml = escapeHtml;
+
+        // Security: escape a value used inside an inline event handler that is a
+        // single-quoted JS string inside a double-quoted HTML attribute, e.g.
+        // onclick="doThing('${escapeJsString(value)}')". Escapes JS-string
+        // breakers and neutralizes attribute/markup breakers.
+        function escapeJsString(value) {
+            if (value === null || value === undefined) return '';
+            return String(value)
+                .replace(/\\/g, '\\\\')
+                .replace(/'/g, "\\'")
+                .replace(/"/g, '&quot;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/[\r\n]+/g, ' ');
+        }
+        window.escapeJsString = escapeJsString;
+
+        // Security: compute SHA-256 hex digest of a string using the Web Crypto API.
+        // Used so admin gate secrets are never stored as plaintext in the source.
+        async function sha256Hex(message) {
+            const data = new TextEncoder().encode(String(message));
+            if (!(window.crypto && window.crypto.subtle)) {
+                throw new Error('Web Crypto API غير متاح. افتح التطبيق عبر https.');
+            }
+            const hashBuffer = await window.crypto.subtle.digest('SHA-256', data);
+            return Array.from(new Uint8Array(hashBuffer))
+                .map(b => b.toString(16).padStart(2, '0'))
+                .join('');
+        }
+        window.sha256Hex = sha256Hex;
+
         // Translation function
         function t(key) {
             const keys = key.split('.');
@@ -3918,6 +4454,9 @@
                             if (userNameEl) {
                                 userNameEl.textContent = user.displayName || user.email || 'المستخدم';
                             }
+
+                            // Resolve role and show the User Management tab only for admins
+                            initUsersAccess();
                             
                             // Load vehicles and setup
                             try {
@@ -3987,6 +4526,13 @@
                         }
                     } else {
                         console.log('⚠️ onAuthStateChanged: No user logged in');
+
+                        // Reset user-management access state and hide its tab
+                        currentUserRole = null;
+                        usersBootstrapMode = false;
+                        isUsersUnlocked = false;
+                        usersCache = [];
+                        updateUsersTabVisibility();
                         
                         // IMPORTANT: Check if dashboard is visible before showing login
                         // If dashboard is visible, user might still be logged in (auth state lag)
@@ -4113,30 +4659,29 @@
                 });
             }
             
-            const searchInput = document.getElementById('search-input');
-            if (searchInput) {
-                searchInput.addEventListener('input', (e) => {
-                    currentFilters.search = e.target.value;
-                    filterVehicles();
-                });
-            }
-            
-            const statusFilter = document.getElementById('status-filter');
-            if (statusFilter) {
-                statusFilter.addEventListener('change', (e) => {
-                    currentFilters.status = e.target.value;
-                    filterVehicles();
-                });
-            }
-            
-            const typeFilter = document.getElementById('type-filter');
-            if (typeFilter) {
-                typeFilter.addEventListener('change', (e) => {
-                    currentFilters.type = e.target.value;
-                    filterVehicles();
-                });
-            }
+            // Note: search/status/type listeners use inline handlers
+            // (onSearchInput/onStatusFilterChange/onTypeFilterChange) so they work
+            // independently of when setupEventListeners runs.
         }
+
+        // Search & basic filter handlers. Bound to window and wired via inline
+        // oninput/onchange attributes so they always work even if setupEventListeners
+        // did not run (e.g. an earlier await in the dashboard setup threw).
+        function onSearchInput(value) {
+            currentFilters.search = value;
+            filterVehicles();
+        }
+        function onStatusFilterChange(value) {
+            currentFilters.status = value;
+            filterVehicles();
+        }
+        function onTypeFilterChange(value) {
+            currentFilters.type = value;
+            filterVehicles();
+        }
+        window.onSearchInput = onSearchInput;
+        window.onStatusFilterChange = onStatusFilterChange;
+        window.onTypeFilterChange = onTypeFilterChange;
 
         // Setup login form listener immediately
         window.addEventListener('DOMContentLoaded', () => {
@@ -4187,71 +4732,14 @@
             const errorDiv = document.getElementById('login-error');
             errorDiv.style.display = 'none';
             
-            // التحقق من قاعدة البيانات المختارة
-            const databaseSelect = document.getElementById('database-select');
-            if (!databaseSelect || !databaseSelect.value) {
-                errorDiv.innerHTML = 'يرجى اختيار قاعدة بيانات';
-                errorDiv.style.display = 'block';
-                if (loginButton) {
-                    loginButton.disabled = false;
-                    loginButton.innerHTML = loginButton.getAttribute('data-original-text') || 'تسجيل الدخول';
-                }
-                return;
-            }
-            
-            const selectedDbId = databaseSelect.value;
-            const currentDbId = localStorage.getItem('selectedDatabaseId');
-            
-            // إذا تغيرت قاعدة البيانات، اطلب إعادة تحميل الصفحة
-            if (selectedDbId !== currentDbId) {
-                if (window.configManager) {
-                    const database = window.configManager.getDatabaseById(selectedDbId);
-                    if (!database) {
-                        errorDiv.innerHTML = 'قاعدة البيانات المحددة غير موجودة';
-                        errorDiv.style.display = 'block';
-                        return;
-                    }
-                }
-                
-                // حفظ قاعدة البيانات المختارة وإعادة تحميل الصفحة
-                localStorage.setItem('selectedDatabaseId', selectedDbId);
-                if (loginButton) {
-                    loginButton.disabled = false;
-                    loginButton.innerHTML = loginButton.getAttribute('data-original-text') || 'تسجيل الدخول';
-                }
-                if (confirm('تم تغيير قاعدة البيانات. يجب إعادة تحميل الصفحة لتطبيق التغييرات.\n\nهل تريد إعادة تحميل الصفحة الآن؟')) {
-                    location.reload();
-                    return;
-                } else {
-                    errorDiv.innerHTML = 'يجب إعادة تحميل الصفحة لاستخدام قاعدة البيانات الجديدة';
-                    errorDiv.style.display = 'block';
-                    return;
-                }
-            }
-            
-            // التأكد من أن قاعدة البيانات المحددة موجودة
+            // قاعدة البيانات: تُستخدم القاعدة المُحمّلة حاليًا تلقائيًا
+            // (أُزيل الاختيار/الإدارة اليدوية من نافذة تسجيل الدخول)
             if (window.configManager) {
-                const database = window.configManager.getDatabaseById(selectedDbId);
-                if (!database) {
-                    errorDiv.innerHTML = 'قاعدة البيانات المحددة غير موجودة';
-                    errorDiv.style.display = 'block';
-                    if (loginButton) {
-                        loginButton.disabled = false;
-                        loginButton.innerHTML = loginButton.getAttribute('data-original-text') || 'تسجيل الدخول';
-                    }
-                    return;
-                }
-                
-                // التأكد من أن Firebase يستخدم الإعدادات الصحيحة
-                const currentConfig = window.configManager.getConfig();
-                if (currentConfig.projectId !== database.config.projectId) {
-                    errorDiv.innerHTML = 'يبدو أن إعدادات Firebase غير متطابقة. يرجى إعادة تحميل الصفحة.';
-                    errorDiv.style.display = 'block';
-                    if (loginButton) {
-                        loginButton.disabled = false;
-                        loginButton.innerHTML = loginButton.getAttribute('data-original-text') || 'تسجيل الدخول';
-                    }
-                    return;
+                let selectedDbId = localStorage.getItem('selectedDatabaseId');
+                const databases = window.configManager.getDatabases();
+                if ((!selectedDbId || !window.configManager.getDatabaseById(selectedDbId)) && databases && databases.length > 0) {
+                    selectedDbId = databases[0].id;
+                    localStorage.setItem('selectedDatabaseId', selectedDbId);
                 }
             }
             
@@ -4283,12 +4771,30 @@
                 const userCredential = await signInWithEmailAndPassword(window.firebaseAuth, email, password);
                 const user = userCredential.user;
                 
+                // Prompt the browser to save the credentials (Credential Management API).
+                // The SPA never navigates, so we explicitly hint the browser after a
+                // successful login. Safe no-op on browsers without support.
+                try {
+                    if (window.PasswordCredential && navigator.credentials && navigator.credentials.store) {
+                        const cred = new window.PasswordCredential({
+                            id: email,
+                            password: password,
+                            name: user.displayName || email
+                        });
+                        navigator.credentials.store(cred).catch(() => {});
+                    }
+                } catch (credErr) {
+                    /* ignore: credential saving is a best-effort enhancement */
+                }
+                
                 // Update currentUser variables immediately
                 currentUser = user;
                 window.currentUser = user;
                 if (window.firebaseAuth) {
                     window.firebaseAuth.currentUser = user;
                 }
+                // Resolve role and toggle the User Management tab for admins
+                initUsersAccess();
                 console.log('✅ handleLogin: Updated user variables:', {
                     currentUser: !!currentUser,
                     windowCurrentUser: !!window.currentUser,
@@ -4446,6 +4952,13 @@
             const errorDiv = document.getElementById('register-error');
             errorDiv.style.display = 'none';
             
+            // Security: block registration unless the admin gate was passed
+            if (!isRegistrationUnlocked) {
+                errorDiv.textContent = 'إنشاء الحسابات مقيّد. يلزم رمز المسؤول.';
+                errorDiv.style.display = 'block';
+                return;
+            }
+            
             if (password.length < 6) {
                 errorDiv.innerHTML = 'كلمة المرور يجب أن تكون 6 أحرف على الأقل';
                 errorDiv.style.display = 'block';
@@ -4498,10 +5011,10 @@
                     errorMessage = `
                         <div style="background: #d1ecf1; padding: 15px; border-radius: 8px; border-right: 4px solid #0c5460; margin: 10px 0;">
                             <strong style="color: #0c5460;">✓ هذا البريد الإلكتروني مسجل بالفعل!</strong><br><br>
-                            البريد: <strong>${email}</strong><br><br>
+                            البريد: <strong>${escapeHtml(email)}</strong><br><br>
                             إذا كان هذا حسابك، يمكنك تسجيل الدخول مباشرة:
                         </div>
-                        <button onclick="switchToLogin('${email}')" style="background: #667eea; color: white; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; width: 100%; font-size: 16px; margin-top: 10px;">
+                        <button onclick="switchToLogin('${escapeJsString(email)}')" style="background: #667eea; color: white; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; width: 100%; font-size: 16px; margin-top: 10px;">
                             <i class="fas fa-sign-in-alt"></i> تسجيل الدخول الآن
                         </button>
                         <p style="text-align: center; margin-top: 15px; color: #666; font-size: 0.9em;">
@@ -4529,9 +5042,359 @@
 
         function closeRegisterModal() {
             document.getElementById('register-modal').style.display = 'none';
+            isRegistrationUnlocked = false;
         }
 
-        function showRegisterForm() {
+        // ===== User Management section =====
+        // Visibility is restricted to admins. The first admin is bootstrapped via the
+        // admin code. New accounts are created in Firebase Authentication and their
+        // Firestore record is keyed by the auth UID.
+        let isUsersUnlocked = false;
+        let currentUserRole = null;      // 'admin' | 'user' | null
+        let usersBootstrapMode = false;  // true when no user records exist yet
+        let usersCache = [];             // last loaded user records (for edit)
+
+        const FS_URL = 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        function isUsersAdmin() {
+            return currentUserRole === 'admin' || usersBootstrapMode;
+        }
+
+        function updateUsersTabVisibility() {
+            const tab = document.getElementById('tab-users');
+            if (!tab) return;
+            tab.style.display = isUsersAdmin() ? '' : 'none';
+        }
+
+        // Determine the current user's role and whether any users exist yet.
+        async function refreshCurrentUserRole() {
+            currentUserRole = null;
+            usersBootstrapMode = false;
+            try {
+                const user = window.currentUser || (window.firebaseAuth && window.firebaseAuth.currentUser);
+                if (!user || !window.firebaseDb) return;
+                const { doc, getDoc, collection, getDocs, query, limit } = await import(FS_URL);
+                const meSnap = await getDoc(doc(window.firebaseDb, 'users', user.uid));
+                if (meSnap.exists()) {
+                    currentUserRole = (meSnap.data() || {}).role || 'user';
+                }
+                const anySnap = await getDocs(query(collection(window.firebaseDb, 'users'), limit(1)));
+                usersBootstrapMode = anySnap.empty;
+            } catch (e) {
+                console.warn('Role check failed:', e);
+            }
+        }
+
+        // Called after auth state resolves to compute role + tab visibility.
+        async function initUsersAccess() {
+            await refreshCurrentUserRole();
+            updateUsersTabVisibility();
+        }
+
+        function loadUsersPage() {
+            const locked = document.getElementById('users-locked');
+            const content = document.getElementById('users-content');
+            if (!locked || !content) return;
+            // Admins skip the code gate entirely.
+            if (currentUserRole === 'admin') isUsersUnlocked = true;
+            if (isUsersUnlocked) {
+                locked.style.display = 'none';
+                content.style.display = 'block';
+                loadUsersList();
+            } else {
+                content.style.display = 'none';
+                locked.style.display = 'block';
+                const codeInput = document.getElementById('users-access-code');
+                if (codeInput) { codeInput.value = ''; setTimeout(() => codeInput.focus(), 100); }
+            }
+        }
+
+        async function verifyUsersAccess() {
+            const codeInput = document.getElementById('users-access-code');
+            const errorDiv = document.getElementById('users-access-error');
+            if (errorDiv) errorDiv.style.display = 'none';
+            const code = codeInput ? codeInput.value : '';
+            if (!code) {
+                if (errorDiv) { errorDiv.textContent = 'يرجى إدخال رمز المسؤول'; errorDiv.style.display = 'block'; }
+                return;
+            }
+            try {
+                const enteredHash = await sha256Hex(code);
+                if (enteredHash !== ADMIN_CODE_HASH) {
+                    if (errorDiv) { errorDiv.textContent = 'رمز المسؤول غير صحيح'; errorDiv.style.display = 'block'; }
+                    return;
+                }
+            } catch (e) {
+                if (errorDiv) { errorDiv.textContent = e.message || 'تعذر التحقق من الرمز'; errorDiv.style.display = 'block'; }
+                return;
+            }
+            // Passing the admin code during bootstrap makes the current account an admin
+            // so it keeps access once other users exist.
+            if (usersBootstrapMode) { await ensureBootstrapAdmin(); }
+            isUsersUnlocked = true;
+            loadUsersPage();
+        }
+
+        // Bootstrap: grant the current logged-in account an admin record (keyed by uid)
+        // if it has none yet, so the owner is not locked out after the first user exists.
+        async function ensureBootstrapAdmin() {
+            try {
+                const user = window.currentUser || (window.firebaseAuth && window.firebaseAuth.currentUser);
+                if (!user || !window.firebaseDb) return;
+                const { doc, getDoc, setDoc, serverTimestamp } = await import(FS_URL);
+                const ref = doc(window.firebaseDb, 'users', user.uid);
+                const snap = await getDoc(ref);
+                if (!snap.exists()) {
+                    await setDoc(ref, {
+                        uid: user.uid,
+                        name: user.displayName || user.email || 'المسؤول',
+                        email: user.email || '',
+                        role: 'admin',
+                        createdAt: serverTimestamp(),
+                        createdBy: 'bootstrap'
+                    });
+                }
+                await refreshCurrentUserRole();
+                updateUsersTabVisibility();
+            } catch (e) {
+                console.warn('Bootstrap admin failed:', e);
+            }
+        }
+
+        // Open the add/edit modal. Pass a uid to edit an existing record.
+        function openUserFormModal(uid) {
+            const modal = document.getElementById('user-form-modal');
+            if (!modal) return;
+            const titleSpan = document.querySelector('#user-form-title span');
+            const idField = document.getElementById('user-form-id');
+            const nameField = document.getElementById('user-form-name');
+            const emailField = document.getElementById('user-form-email');
+            const passwordGroup = document.getElementById('user-form-password-group');
+            const passwordField = document.getElementById('user-form-password');
+            const emailHint = document.getElementById('user-form-email-hint');
+            const roleField = document.getElementById('user-form-role');
+            const errorDiv = document.getElementById('user-form-error');
+            if (errorDiv) errorDiv.style.display = 'none';
+
+            if (uid) {
+                const u = usersCache.find(x => x.id === uid) || {};
+                if (titleSpan) titleSpan.textContent = 'تعديل المستخدم';
+                idField.value = uid;
+                nameField.value = u.name || '';
+                emailField.value = u.email || '';
+                emailField.readOnly = true;
+                if (emailHint) emailHint.style.display = 'block';
+                roleField.value = u.role || 'user';
+                // Cannot change another account's password from the client SDK.
+                if (passwordGroup) passwordGroup.style.display = 'none';
+                if (passwordField) { passwordField.required = false; passwordField.value = ''; }
+            } else {
+                if (titleSpan) titleSpan.textContent = 'إضافة مستخدم جديد';
+                idField.value = '';
+                nameField.value = '';
+                emailField.value = '';
+                emailField.readOnly = false;
+                if (emailHint) emailHint.style.display = 'none';
+                roleField.value = 'user';
+                if (passwordGroup) passwordGroup.style.display = 'block';
+                if (passwordField) { passwordField.required = true; passwordField.value = ''; }
+            }
+            modal.style.display = 'block';
+            setTimeout(() => nameField && nameField.focus(), 100);
+        }
+
+        function closeUserFormModal() {
+            const modal = document.getElementById('user-form-modal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        async function saveUser(event) {
+            event.preventDefault();
+            const errorDiv = document.getElementById('user-form-error');
+            const submitBtn = document.getElementById('user-form-submit');
+            if (errorDiv) errorDiv.style.display = 'none';
+
+            const editingId = document.getElementById('user-form-id').value;
+            const name = document.getElementById('user-form-name').value.trim();
+            const email = document.getElementById('user-form-email').value.trim();
+            const password = document.getElementById('user-form-password').value;
+            const role = document.getElementById('user-form-role').value;
+
+            if (!name || !email) {
+                if (errorDiv) { errorDiv.textContent = 'يرجى إدخال الاسم والبريد الإلكتروني'; errorDiv.style.display = 'block'; }
+                return;
+            }
+
+            const originalBtnHtml = submitBtn ? submitBtn.innerHTML : '';
+            if (submitBtn) { submitBtn.disabled = true; submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الحفظ...'; }
+
+            try {
+                if (editingId) {
+                    // Edit: update the Firestore record only (name + role).
+                    const { doc, updateDoc, serverTimestamp } = await import(FS_URL);
+                    await updateDoc(doc(window.firebaseDb, 'users', editingId), {
+                        name: name,
+                        role: role,
+                        updatedAt: serverTimestamp()
+                    });
+                    showToast('تم تحديث المستخدم بنجاح', 'success');
+                } else {
+                    // Add: create in Authentication then store the record keyed by UID.
+                    if (password.length < 6) {
+                        if (errorDiv) { errorDiv.textContent = 'كلمة المرور يجب أن تكون 6 أحرف على الأقل'; errorDiv.style.display = 'block'; }
+                        if (submitBtn) { submitBtn.disabled = false; submitBtn.innerHTML = originalBtnHtml; }
+                        return;
+                    }
+                    await createUserInAuth({ name, email, password, role });
+                    showToast('تم إنشاء المستخدم بنجاح', 'success');
+                }
+                closeUserFormModal();
+                loadUsersList();
+            } catch (error) {
+                console.error('Save user error:', error);
+                if (errorDiv) { errorDiv.textContent = mapUserAuthError(error); errorDiv.style.display = 'block'; }
+            } finally {
+                if (submitBtn) { submitBtn.disabled = false; submitBtn.innerHTML = originalBtnHtml; }
+            }
+        }
+
+        function mapUserAuthError(error) {
+            if (error && error.code === 'auth/email-already-in-use') return 'هذا البريد الإلكتروني مسجّل بالفعل';
+            if (error && error.code === 'auth/invalid-email') return 'البريد الإلكتروني غير صحيح';
+            if (error && error.code === 'auth/weak-password') return 'كلمة المرور ضعيفة جداً (6 أحرف على الأقل)';
+            if (error && (error.code === 'auth/operation-not-allowed' || error.code === 'auth/configuration-not-found')) return 'يجب تفعيل تسجيل الدخول بالبريد/كلمة المرور في إعدادات Firebase';
+            if (error && error.code === 'auth/network-request-failed') return 'تحقق من الاتصال بالإنترنت';
+            return (error && error.message) ? ('خطأ: ' + error.message) : 'حدث خطأ أثناء حفظ المستخدم';
+        }
+
+        // Creates the account in Firebase Authentication using a SECONDARY app (so the
+        // current admin stays signed in), then writes the Firestore record keyed by uid.
+        async function createUserInAuth({ name, email, password, role }) {
+            let secondaryApp = null;
+            try {
+                const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js');
+                const { getAuth, createUserWithEmailAndPassword, updateProfile, signOut } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js');
+                const config = (window.configManager || configManager).getConfig();
+
+                secondaryApp = initializeApp(config, 'userCreator-' + Date.now());
+                const secondaryAuth = getAuth(secondaryApp);
+                const cred = await createUserWithEmailAndPassword(secondaryAuth, email, password);
+                await updateProfile(cred.user, { displayName: name });
+
+                const { doc, setDoc, serverTimestamp } = await import(FS_URL);
+                await setDoc(doc(window.firebaseDb, 'users', cred.user.uid), {
+                    uid: cred.user.uid,
+                    name: name,
+                    email: email,
+                    role: role,
+                    createdAt: serverTimestamp(),
+                    createdBy: (window.currentUser && window.currentUser.email) || ''
+                });
+
+                try { await signOut(secondaryAuth); } catch (e) {}
+            } finally {
+                if (secondaryApp) {
+                    try {
+                        const { deleteApp } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js');
+                        await deleteApp(secondaryApp);
+                    } catch (e) {}
+                }
+            }
+        }
+
+        async function loadUsersList() {
+            const tbody = document.getElementById('users-table-body');
+            const empty = document.getElementById('users-empty');
+            if (!tbody) return;
+            tbody.innerHTML = '<tr><td colspan="5" style="padding:24px; text-align:center; color:var(--text-light);"><i class="fas fa-spinner fa-spin"></i> جاري التحميل...</td></tr>';
+            try {
+                const { collection, getDocs, query, orderBy } = await import(FS_URL);
+                let snapshot;
+                try {
+                    snapshot = await getDocs(query(collection(window.firebaseDb, 'users'), orderBy('createdAt', 'desc')));
+                } catch (orderErr) {
+                    snapshot = await getDocs(collection(window.firebaseDb, 'users'));
+                }
+
+                usersCache = [];
+                snapshot.forEach(docSnap => {
+                    usersCache.push({ id: docSnap.id, ...(docSnap.data() || {}) });
+                });
+
+                if (usersCache.length === 0) {
+                    tbody.innerHTML = '';
+                    if (empty) empty.style.display = 'block';
+                    return;
+                }
+                if (empty) empty.style.display = 'none';
+
+                tbody.innerHTML = usersCache.map(u => {
+                    const roleLabel = u.role === 'admin' ? 'مسؤول' : 'مستخدم';
+                    const roleColor = u.role === 'admin'
+                        ? 'background:#eef0ff; color:#5b4bd6;'
+                        : 'background:#e8f7ef; color:#1b8a52;';
+                    let dateStr = '-';
+                    try {
+                        if (u.createdAt && typeof u.createdAt.toDate === 'function') {
+                            dateStr = u.createdAt.toDate().toLocaleDateString('ar-EG');
+                        }
+                    } catch (e) {}
+                    const safeId = escapeJsString(String(u.id || ''));
+                    return `
+                        <tr style="border-bottom:1px solid var(--border-light, #f0f0f0);">
+                            <td style="padding:12px 14px; font-size:14px; color:var(--text-dark);">${escapeHtml(u.name || '-')}</td>
+                            <td style="padding:12px 14px; font-size:14px; color:var(--text-dark);">${escapeHtml(u.email || '-')}</td>
+                            <td style="padding:12px 14px;"><span style="display:inline-block; padding:4px 12px; border-radius:20px; font-size:12px; font-weight:600; ${roleColor}">${escapeHtml(roleLabel)}</span></td>
+                            <td style="padding:12px 14px; font-size:13px; color:var(--text-light);">${escapeHtml(dateStr)}</td>
+                            <td style="padding:12px 14px; text-align:center; white-space:nowrap;">
+                                <button type="button" onclick="openUserFormModal('${safeId}')" title="تعديل" style="background:#eef0ff; color:#5b4bd6; border:none; padding:7px 12px; border-radius:8px; cursor:pointer; font-size:13px; margin-left:6px;">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button type="button" onclick="deleteUserRecord('${safeId}', '${escapeJsString(u.email || '')}')" title="إزالة من القائمة" style="background:#fee; color:#dc3545; border:none; padding:7px 12px; border-radius:8px; cursor:pointer; font-size:13px;">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            } catch (error) {
+                console.error('Load users error:', error);
+                tbody.innerHTML = '<tr><td colspan="5" style="padding:24px; text-align:center; color:#c33;">تعذّر تحميل قائمة المستخدمين</td></tr>';
+            }
+        }
+
+        async function deleteUserRecord(id, email) {
+            if (!id) return;
+            if (!confirm('إزالة المستخدم "' + (email || '') + '" من القائمة؟\n\nملاحظة: لن يُحذف حساب الدخول من Firebase نهائيًا.')) return;
+            try {
+                const { doc, deleteDoc } = await import(FS_URL);
+                await deleteDoc(doc(window.firebaseDb, 'users', id));
+                showToast('تمت الإزالة من القائمة', 'success');
+                loadUsersList();
+            } catch (error) {
+                console.error('Delete user record error:', error);
+                showToast('تعذّر حذف السجل', 'error');
+            }
+        }
+
+        // Security: public self-registration is disabled. Creating a new account
+        // requires the admin code so random visitors cannot sign themselves up.
+        let isRegistrationUnlocked = false;
+        async function showRegisterForm() {
+            const code = prompt('إنشاء الحسابات مقيّد. أدخل رمز المسؤول للمتابعة:');
+            if (code === null) return; // user cancelled
+            try {
+                const enteredHash = await sha256Hex(code);
+                if (enteredHash !== ADMIN_CODE_HASH) {
+                    isRegistrationUnlocked = false;
+                    alert('رمز المسؤول غير صحيح. لا يمكن إنشاء حساب جديد.');
+                    return;
+                }
+            } catch (e) {
+                alert(e.message || 'تعذر التحقق من رمز المسؤول');
+                return;
+            }
+            isRegistrationUnlocked = true;
             document.getElementById('login-modal').style.display = 'none';
             document.getElementById('reset-password-modal').style.display = 'none';
             document.getElementById('register-modal').style.display = 'block';
@@ -4613,7 +5476,9 @@
         }
 
         // Database Management Functions
-        const DATABASE_PASSWORD = 'Am9875321';
+        // Security: store only the SHA-256 hash of the admin code, never the plaintext.
+        // This same admin code gates database management AND new-account registration.
+        const ADMIN_CODE_HASH = '3e4e0b4a2b72c75f66fd9031fe91fcd43058fa7c65d74c914fd6eff53350e868';
         let currentEditingDbId = null;
         let isDatabasePasswordVerified = false;
 
@@ -4674,9 +5539,16 @@
         }
 
         // التحقق من كلمة مرور قاعدة البيانات
-        function verifyDatabasePassword() {
+        async function verifyDatabasePassword() {
             const password = document.getElementById('database-password').value;
-            if (password === DATABASE_PASSWORD) {
+            let enteredHash = '';
+            try {
+                enteredHash = await sha256Hex(password);
+            } catch (e) {
+                alert(e.message || 'تعذر التحقق من كلمة المرور');
+                return;
+            }
+            if (enteredHash === ADMIN_CODE_HASH) {
                 isDatabasePasswordVerified = true;
                 document.getElementById('database-password-prompt').style.display = 'none';
                 document.getElementById('database-manager-content').style.display = 'block';
@@ -4979,7 +5851,7 @@
                 driverDiv.innerHTML = `
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <div style="flex: 1;">
-                            <h4 style="margin: 0 0 5px 0; color: #333;">${driver.name || 'بدون اسم'}</h4>
+                            <h4 style="margin: 0 0 5px 0; color: #333;">${escapeHtml(driver.name) || 'بدون اسم'}</h4>
                             <p style="margin: 5px 0; color: #666; font-size: 0.9em;">
                                 الراتب الابتدائي: ${driver.initialSalary ? driver.initialSalary.toLocaleString() + ' دينار' : 'غير محدد'}
                             </p>
@@ -5000,7 +5872,7 @@
                             ` : ''}
                             <p style="margin: 5px 0; color: ${driver.workStatus === 'مستمر' ? '#28a745' : '#dc3545'}; font-size: 0.9em; font-weight: bold;">
                                 <i class="fas fa-${driver.workStatus === 'مستمر' ? 'check-circle' : 'times-circle'}"></i> 
-                                حالة العمل: ${driver.workStatus || 'مستمر'}
+                                حالة العمل: ${escapeHtml(driver.workStatus) || 'مستمر'}
                             </p>
                             ${driver.workStatus === 'منتهي' && driver.endDate ? `
                                 <p style="margin: 5px 0; color: #666; font-size: 0.9em;">
@@ -5932,7 +6804,7 @@
             
             notification.innerHTML = `
                 <i class="fas fa-${type === 'warning' ? 'exclamation-triangle' : type === 'error' ? 'times-circle' : 'info-circle'}"></i>
-                <span>${message}</span>
+                <span>${escapeHtml(message)}</span>
                 <button onclick="this.parentElement.remove()" style="background: none; border: none; color: white; cursor: pointer; margin-right: auto; font-size: 18px;">&times;</button>
             `;
             
@@ -6099,42 +6971,42 @@
                 <td style="padding: 14px 16px; text-align: right; font-weight: 700; color: var(--primary-color); font-size: 14px; white-space: nowrap;">
                     <div style="display: flex; align-items: center; gap: 8px;">
                         <i class="fas fa-car" style="color: var(--primary-color); font-size: 16px;"></i>
-                        <span>${vehicle.vehicleNumber || '-'}</span>
+                        <span>${escapeHtml(vehicle.vehicleNumber) || '-'}</span>
                     </div>
                 </td>
                 <td style="padding: 14px 16px; text-align: right; color: var(--text-dark); font-size: 13px;">
-                    ${vehicle.vehicleType || '-'}
+                    ${escapeHtml(vehicle.vehicleType) || '-'}
                 </td>
-                <td style="padding: 14px 16px; text-align: right; color: var(--text-dark); font-size: 13px; max-width: 250px;" title="${vehicle.description || ''}">
+                <td style="padding: 14px 16px; text-align: right; color: var(--text-dark); font-size: 13px; max-width: 250px;" title="${escapeHtml(vehicle.description)}">
                     <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                        ${vehicle.description || '-'}
+                        ${escapeHtml(vehicle.description) || '-'}
                     </div>
                 </td>
                 <td style="padding: 14px 16px; text-align: right; color: var(--text-dark); font-size: 13px; font-weight: 600;">
-                    ${vehicle.plate || '-'}
+                    ${escapeHtml(vehicle.plate) || '-'}
                 </td>
                 <td style="padding: 14px 16px; text-align: right; color: var(--text-dark); font-size: 13px;">
-                    ${vehicle.brand || '-'}
+                    ${escapeHtml(vehicle.brand) || '-'}
                 </td>
                 <td style="padding: 14px 16px; text-align: right; color: var(--text-dark); font-size: 13px;">
-                    ${vehicle.model || '-'}
+                    ${escapeHtml(vehicle.model) || '-'}
                 </td>
                 <td style="padding: 14px 16px; text-align: right; color: var(--text-dark); font-size: 13px;">
                     <div style="display: flex; align-items: center; gap: 6px; justify-content: flex-end;">
                         ${driver1Name !== '-' ? `<i class="fas fa-user" style="color: #667eea; font-size: 12px;"></i>` : ''}
-                        <span>${driver1Name}</span>
+                        <span>${escapeHtml(driver1Name)}</span>
                     </div>
                 </td>
                 <td style="padding: 14px 16px; text-align: right; color: var(--text-dark); font-size: 13px;">
                     <div style="display: flex; align-items: center; gap: 6px; justify-content: flex-end;">
                         ${driver2Name !== '-' ? `<i class="fas fa-user" style="color: #667eea; font-size: 12px;"></i>` : ''}
-                        <span>${driver2Name}</span>
+                        <span>${escapeHtml(driver2Name)}</span>
                     </div>
                 </td>
                 <td style="padding: 14px 16px; text-align: right;">
                     <span style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 18px; background: ${statusColor}20; color: ${statusColor}; font-size: 12px; font-weight: 600; white-space: nowrap;">
                         <i class="fas fa-circle" style="font-size: 7px;"></i>
-                        ${vehicle.status || getDefaultStatus()}
+                        ${escapeHtml(vehicle.status || getDefaultStatus())}
                     </span>
                 </td>
                 <td style="padding: 14px 16px; text-align: right;">
@@ -6142,15 +7014,15 @@
                         <div style="display: flex; flex-direction: column; gap: 4px; align-items: flex-end;">
                             <span style="display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 18px; background: ${validityColor}20; color: ${validityColor}; font-size: 12px; font-weight: 600; white-space: nowrap;">
                                 <i class="fas ${validityIcon}" style="font-size: 11px;"></i>
-                                ${validityStatus}
+                                ${escapeHtml(validityStatus)}
                             </span>
-                            <small style="color: var(--text-light); font-size: 11px; white-space: nowrap;">${formatDate(vehicle.annualExpiryDate)}</small>
+                            <small style="color: var(--text-light); font-size: 11px; white-space: nowrap;">${escapeHtml(formatDate(vehicle.annualExpiryDate))}</small>
                         </div>
                     ` : '<span style="color: var(--text-light); font-size: 13px;">-</span>'}
                 </td>
-                <td style="padding: 14px 16px; text-align: right; color: var(--text-dark); font-size: 13px;" title="${vehicle.currentProject || ''}">
+                <td style="padding: 14px 16px; text-align: right; color: var(--text-dark); font-size: 13px;" title="${escapeHtml(vehicle.currentProject)}">
                     <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 180px;">
-                        ${vehicle.currentProject || '-'}
+                        ${escapeHtml(vehicle.currentProject) || '-'}
                     </div>
                 </td>
                 <td style="padding: 14px 16px; text-align: center;">
@@ -6361,14 +7233,14 @@
                     <!-- Status Badge -->
                     <div style="position: absolute; top: 15px; left: 15px; background: ${statusColor}; color: white; padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; display: flex; align-items: center; gap: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.2);">
                         <i class="fas fa-circle" style="font-size: 6px;"></i>
-                        ${vehicle.status || getDefaultStatus()}
+                        ${escapeHtml(vehicle.status || getDefaultStatus())}
                     </div>
                     
                     <!-- Validity Badge -->
                     ${vehicle.annualValidityStatus ? `
                         <div style="position: absolute; top: 15px; right: 15px; background: ${validityColor}; color: white; padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; display: flex; align-items: center; gap: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.2);">
                             <i class="fas ${validityIcon}"></i>
-                            ${validityStatus}
+                            ${escapeHtml(validityStatus)}
                         </div>
                     ` : ''}
                     
@@ -6380,11 +7252,11 @@
                             </div>
                             <div style="flex: 1;">
                                 <div style="font-size: 20px; font-weight: 700; color: var(--text-dark); margin-bottom: 4px;">
-                                    ${vehicle.vehicleNumber}
+                                    ${escapeHtml(vehicle.vehicleNumber)}
                                 </div>
                                 <div style="font-size: 13px; color: var(--text-light); display: flex; align-items: center; gap: 6px;">
                                     <i class="fas fa-tag" style="font-size: 10px;"></i>
-                                    ${vehicle.vehicleType || 'غير محدد'}
+                                    ${escapeHtml(vehicle.vehicleType) || 'غير محدد'}
                                 </div>
                             </div>
                         </div>
@@ -6399,7 +7271,7 @@
                                         <i class="fas fa-id-card"></i>
                                         اللوحة
                                     </div>
-                                    <div style="font-size: 14px; font-weight: 600; color: var(--text-dark);">${vehicle.plate}</div>
+                                    <div style="font-size: 14px; font-weight: 600; color: var(--text-dark);">${escapeHtml(vehicle.plate)}</div>
                                 </div>
                             ` : ''}
                             
@@ -6409,7 +7281,7 @@
                                         <i class="fas fa-tag"></i>
                                         الماركة
                                     </div>
-                                    <div style="font-size: 14px; font-weight: 600; color: var(--text-dark);">${vehicle.brand}${vehicle.model ? ' ' + vehicle.model : ''}</div>
+                                    <div style="font-size: 14px; font-weight: 600; color: var(--text-dark);">${escapeHtml(vehicle.brand)}${vehicle.model ? ' ' + escapeHtml(vehicle.model) : ''}</div>
                                 </div>
                             ` : ''}
                             
@@ -6419,7 +7291,7 @@
                                         <i class="fas fa-palette"></i>
                                         اللون
                                     </div>
-                                    <div style="font-size: 14px; font-weight: 600; color: var(--text-dark);">${vehicle.color}</div>
+                                    <div style="font-size: 14px; font-weight: 600; color: var(--text-dark);">${escapeHtml(vehicle.color)}</div>
                                 </div>
                             ` : ''}
                             
@@ -6429,7 +7301,7 @@
                                         <i class="fas fa-project-diagram"></i>
                                         المشروع
                                     </div>
-                                    <div style="font-size: 14px; font-weight: 600; color: var(--text-dark);">${vehicle.currentProject}</div>
+                                    <div style="font-size: 14px; font-weight: 600; color: var(--text-dark);">${escapeHtml(vehicle.currentProject)}</div>
                                 </div>
                             ` : ''}
                         </div>
@@ -6848,39 +7720,6 @@
             if (quickExpired) quickExpired.textContent = expired.toLocaleString('en-US');
         }
 
-        function toggleAdvancedSearch() {
-            const panel = document.getElementById('advanced-search-panel');
-            if (panel) {
-                panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
-            }
-        }
-
-        function applyAdvancedSearch() {
-            currentFilters.brand = (document.getElementById('advanced-brand')?.value || '').trim();
-            currentFilters.model = (document.getElementById('advanced-model')?.value || '').trim();
-            currentFilters.color = (document.getElementById('advanced-color')?.value || '').trim();
-            
-            filterVehicles();
-            showToast('تم تطبيق البحث المتقدم', 'success');
-        }
-
-        function clearAdvancedSearch() {
-            const brandEl = document.getElementById('advanced-brand');
-            const modelEl = document.getElementById('advanced-model');
-            const colorEl = document.getElementById('advanced-color');
-            
-            if (brandEl) brandEl.value = '';
-            if (modelEl) modelEl.value = '';
-            if (colorEl) colorEl.value = '';
-            
-            currentFilters.brand = '';
-            currentFilters.model = '';
-            currentFilters.color = '';
-            
-            filterVehicles();
-            showToast('تم مسح البحث المتقدم', 'info');
-        }
-
         // Bulk Import Functions
         async function openBulkImportModal() {
             const modal = document.getElementById('bulk-import-modal');
@@ -6928,13 +7767,13 @@
                 termsData[termCategory].forEach(term => {
                     if (term && term.name1) {
                         const selected = term.name1 === value ? 'selected' : '';
-                        options += `<option value="${term.name1}" ${selected}>${term.name1}</option>`;
+                        options += `<option value="${escapeHtml(term.name1)}" ${selected}>${escapeHtml(term.name1)}</option>`;
                     }
                 });
-                return `<select class="bulk-input bulk-select" data-field="${field}" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px;" onkeydown="handleBulkKeydown(event, this)" onpaste="handleBulkPaste(event, this)">${options}</select>`;
+                return `<select class="bulk-input bulk-select" data-field="${escapeHtml(field)}" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px;" onkeydown="handleBulkKeydown(event, this)" onpaste="handleBulkPaste(event, this)">${options}</select>`;
             } else {
                 // Create input for fields without terms
-                return `<input type="text" class="bulk-input" data-field="${field}" value="${value}" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px;" onkeydown="handleBulkKeydown(event, this)">`;
+                return `<input type="text" class="bulk-input" data-field="${escapeHtml(field)}" value="${escapeHtml(value)}" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px;" onkeydown="handleBulkKeydown(event, this)">`;
             }
         }
         
@@ -8310,7 +9149,7 @@
             
             modalBody.innerHTML = `
                 <div class="modal-header">
-                    <h2><i class="fas fa-car"></i> ${vehicle.vehicleNumber} - ${vehicle.vehicleType || 'مركبة'}</h2>
+                    <h2><i class="fas fa-car"></i> ${escapeHtml(vehicle.vehicleNumber)} - ${escapeHtml(vehicle.vehicleType) || 'مركبة'}</h2>
                 </div>
                 
                 <div class="two-columns">
@@ -8356,68 +9195,68 @@
                         ` : ''}
                         <div class="form-group">
                             <label>رقم المركبة:</label>
-                            <div style="padding: 12px; background: #f8f9fa; border-radius: 8px;">${vehicle.vehicleNumber}</div>
+                            <div style="padding: 12px; background: #f8f9fa; border-radius: 8px;">${escapeHtml(vehicle.vehicleNumber)}</div>
                         </div>
                         <div class="form-group">
                             <label>نوع المركبة:</label>
-                            <div style="padding: 12px; background: #f8f9fa; border-radius: 8px;">${vehicle.vehicleType || 'غير محدد'}</div>
+                            <div style="padding: 12px; background: #f8f9fa; border-radius: 8px;">${escapeHtml(vehicle.vehicleType) || 'غير محدد'}</div>
                         </div>
                         ${vehicle.plate ? `
                             <div class="form-group">
                                 <label>رقم اللوحة:</label>
-                                <div style="padding: 12px; background: #f8f9fa; border-radius: 8px;">${vehicle.plate}</div>
+                                <div style="padding: 12px; background: #f8f9fa; border-radius: 8px;">${escapeHtml(vehicle.plate)}</div>
                             </div>
                         ` : ''}
                         ${vehicle.brand ? `
                             <div class="form-group">
                                 <label>الماركة:</label>
-                                <div style="padding: 12px; background: #f8f9fa; border-radius: 8px;">${vehicle.brand}</div>
+                                <div style="padding: 12px; background: #f8f9fa; border-radius: 8px;">${escapeHtml(vehicle.brand)}</div>
                             </div>
                         ` : ''}
                         ${vehicle.model ? `
                             <div class="form-group">
                                 <label>الموديل:</label>
-                                <div style="padding: 12px; background: #f8f9fa; border-radius: 8px;">${vehicle.model}</div>
+                                <div style="padding: 12px; background: #f8f9fa; border-radius: 8px;">${escapeHtml(vehicle.model)}</div>
                             </div>
                         ` : ''}
                         <div class="form-group">
                             <label>الحالة:</label>
-                            <div style="padding: 12px; background: #f8f9fa; border-radius: 8px; color: ${getStatusColor(vehicle.status)}">${vehicle.status || getDefaultStatus()}</div>
+                            <div style="padding: 12px; background: #f8f9fa; border-radius: 8px; color: ${getStatusColor(vehicle.status)}">${escapeHtml(vehicle.status || getDefaultStatus())}</div>
                         </div>
                         ${vehicle.color ? `
                             <div class="form-group">
                                 <label><i class="fas fa-palette"></i> اللون:</label>
-                                <div style="padding: 12px; background: #f8f9fa; border-radius: 8px;">${vehicle.color}</div>
+                                <div style="padding: 12px; background: #f8f9fa; border-radius: 8px;">${escapeHtml(vehicle.color)}</div>
                             </div>
                         ` : ''}
                         ${vehicle.chassis ? `
                             <div class="form-group">
                                 <label><i class="fas fa-barcode"></i> رقم الشاصي:</label>
-                                <div style="padding: 12px; background: #f8f9fa; border-radius: 8px; font-family: monospace;">${vehicle.chassis}</div>
+                                <div style="padding: 12px; background: #f8f9fa; border-radius: 8px; font-family: monospace;">${escapeHtml(vehicle.chassis)}</div>
                             </div>
                         ` : ''}
                         ${vehicle.engine ? `
                             <div class="form-group">
                                 <label><i class="fas fa-cog"></i> رقم المحرك:</label>
-                                <div style="padding: 12px; background: #f8f9fa; border-radius: 8px; font-family: monospace;">${vehicle.engine}</div>
+                                <div style="padding: 12px; background: #f8f9fa; border-radius: 8px; font-family: monospace;">${escapeHtml(vehicle.engine)}</div>
                             </div>
                         ` : ''}
                         ${vehicle.description ? `
                             <div class="form-group">
                                 <label><i class="fas fa-tag"></i> الوصف:</label>
-                                <div style="padding: 12px; background: #f8f9fa; border-radius: 8px;">${vehicle.description}</div>
+                                <div style="padding: 12px; background: #f8f9fa; border-radius: 8px;">${escapeHtml(vehicle.description)}</div>
                             </div>
                         ` : ''}
                         ${vehicle.load ? `
                             <div class="form-group">
                                 <label><i class="fas fa-weight"></i> الحمل:</label>
-                                <div style="padding: 12px; background: #f8f9fa; border-radius: 8px;">${vehicle.load}</div>
+                                <div style="padding: 12px; background: #f8f9fa; border-radius: 8px;">${escapeHtml(vehicle.load)}</div>
                             </div>
                         ` : ''}
                         ${vehicle.purchaseDate ? `
                             <div class="form-group">
                                 <label><i class="fas fa-calendar"></i> تاريخ الشراء:</label>
-                                <div style="padding: 12px; background: #f8f9fa; border-radius: 8px;">${vehicle.purchaseDate}</div>
+                                <div style="padding: 12px; background: #f8f9fa; border-radius: 8px;">${escapeHtml(vehicle.purchaseDate)}</div>
                             </div>
                         ` : ''}
                         ${vehicle.annualIssueDate || vehicle.annualExpiryDate ? `
@@ -8427,19 +9266,19 @@
                                 </h4>
                                 ${vehicle.annualIssueDate ? `
                                     <div style="margin-bottom: 8px;">
-                                        <strong>تاريخ الإصدار:</strong> ${vehicle.annualIssueDate}
+                                        <strong>تاريخ الإصدار:</strong> ${escapeHtml(vehicle.annualIssueDate)}
                                     </div>
                                 ` : ''}
                                 ${vehicle.annualExpiryDate ? `
                                     <div style="margin-bottom: 8px;">
-                                        <strong>تاريخ الانتهاء:</strong> ${vehicle.annualExpiryDate}
+                                        <strong>تاريخ الانتهاء:</strong> ${escapeHtml(vehicle.annualExpiryDate)}
                                     </div>
                                 ` : ''}
                                 ${vehicle.annualValidityStatus ? `
                                     <div>
                                         <strong>الحالة:</strong> 
                                         <span style="color: ${vehicle.annualValidityStatus === 'نافذة' ? '#dc3545' : vehicle.annualValidityStatus === 'قريب الانتهاء' ? '#ffc107' : '#28a745'}; font-weight: bold;">
-                                            ${vehicle.annualValidityStatus}
+                                            ${escapeHtml(vehicle.annualValidityStatus)}
                                         </span>
                                     </div>
                                 ` : ''}
@@ -8451,11 +9290,11 @@
                                     <i class="fas fa-project-diagram"></i> المشروع الحالي
                                 </h4>
                                 <div style="margin-bottom: 8px;">
-                                    <strong>المشروع:</strong> ${vehicle.currentProject}
+                                    <strong>المشروع:</strong> ${escapeHtml(vehicle.currentProject)}
                                 </div>
                                 ${vehicle.projectStartDate ? `
                                     <div>
-                                        <strong>تاريخ البدء:</strong> ${vehicle.projectStartDate}
+                                        <strong>تاريخ البدء:</strong> ${escapeHtml(vehicle.projectStartDate)}
                                     </div>
                                 ` : ''}
                             </div>
@@ -8489,7 +9328,7 @@
                                             <div style="background: white; padding: 12px; border-radius: 8px; margin-bottom: 10px; border-right: 3px solid #4caf50;">
                                                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                                                     <strong style="color: #2e7d32;"><i class="fas fa-user"></i> السائق الأول:</strong>
-                                                    <span style="font-weight: bold; color: #333;">${driver1Info.name || 'غير محدد'}</span>
+                                                    <span style="font-weight: bold; color: #333;">${escapeHtml(driver1Info.name) || 'غير محدد'}</span>
                                                 </div>
                                                 ${driver1Info.initialSalary ? `
                                                     <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #e0e0e0;">
@@ -8531,7 +9370,7 @@
                                                     <div style="margin-top: 4px; font-size: 0.9em;">
                                                         <div style="display: flex; justify-content: space-between;">
                                                             <span style="color: #666;"><i class="fas fa-${driver1Info.workStatus === 'مستمر' ? 'check-circle' : 'times-circle'}"></i> حالة العمل:</span>
-                                                            <span style="font-weight: 600; color: ${driver1Info.workStatus === 'مستمر' ? '#28a745' : '#dc3545'};">${driver1Info.workStatus}</span>
+                                                            <span style="font-weight: 600; color: ${driver1Info.workStatus === 'مستمر' ? '#28a745' : '#dc3545'};">${escapeHtml(driver1Info.workStatus)}</span>
                                                         </div>
                                                     </div>
                                                 ` : ''}
@@ -8559,7 +9398,7 @@
                                             <div style="background: white; padding: 12px; border-radius: 8px; border-right: 3px solid #4caf50;">
                                                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                                                     <strong style="color: #2e7d32;"><i class="fas fa-user"></i> السائق الثاني:</strong>
-                                                    <span style="font-weight: bold; color: #333;">${driver2Info.name || 'غير محدد'}</span>
+                                                    <span style="font-weight: bold; color: #333;">${escapeHtml(driver2Info.name) || 'غير محدد'}</span>
                                                 </div>
                                                 ${driver2Info.initialSalary ? `
                                                     <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #e0e0e0;">
@@ -8601,7 +9440,7 @@
                                                     <div style="margin-top: 4px; font-size: 0.9em;">
                                                         <div style="display: flex; justify-content: space-between;">
                                                             <span style="color: #666;"><i class="fas fa-${driver2Info.workStatus === 'مستمر' ? 'check-circle' : 'times-circle'}"></i> حالة العمل:</span>
-                                                            <span style="font-weight: 600; color: ${driver2Info.workStatus === 'مستمر' ? '#28a745' : '#dc3545'};">${driver2Info.workStatus}</span>
+                                                            <span style="font-weight: 600; color: ${driver2Info.workStatus === 'مستمر' ? '#28a745' : '#dc3545'};">${escapeHtml(driver2Info.workStatus)}</span>
                                                         </div>
                                                     </div>
                                                 ` : ''}
@@ -8631,7 +9470,7 @@
                         ${vehicle.notes ? `
                             <div class="form-group">
                                 <label><i class="fas fa-sticky-note"></i> ملاحظات:</label>
-                                <div style="padding: 12px; background: #f8f9fa; border-radius: 8px; white-space: pre-wrap; min-height: 60px;">${vehicle.notes}</div>
+                                <div style="padding: 12px; background: #f8f9fa; border-radius: 8px; white-space: pre-wrap; min-height: 60px;">${escapeHtml(vehicle.notes)}</div>
                             </div>
                         ` : ''}
                     </div>
@@ -8642,7 +9481,7 @@
                         <div style="background: #fff3e0; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-right: 4px solid #ff9800;">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                                 <h4 style="color: #f57c00; margin: 0;">إضافة قراءة جديدة</h4>
-                                <button class="btn btn-primary" onclick="showAddKilometerModal('${vehicle.id}', '${vehicle.vehicleNumber}')" style="padding: 8px 16px;">
+                                <button class="btn btn-primary" onclick="showAddKilometerModal('${escapeJsString(vehicle.id)}', '${escapeJsString(vehicle.vehicleNumber)}')" style="padding: 8px 16px;">
                                     <i class="fas fa-plus"></i> إضافة
                                 </button>
                             </div>
@@ -8699,12 +9538,12 @@
                                             
                                             return `
                                                 <tr style="border-bottom: 1px solid var(--border-color);">
-                                                    <td style="padding: 10px; color: var(--text-dark);">${date}</td>
+                                                    <td style="padding: 10px; color: var(--text-dark);">${escapeHtml(date)}</td>
                                                     <td style="padding: 10px; font-weight: bold; color: var(--primary-color);">${displayValue}</td>
                                                     <td style="padding: 10px; color: var(--text-light);">${distanceDisplay}</td>
                                                     <td style="padding: 10px; color: var(--text-light); font-size: 12px;">${resetIndicator}</td>
                                                     <td style="padding: 10px; text-align: center;">
-                                                        <button onclick="deleteKilometerReading('${vehicle.id}', '${km.id}', '${vehicle.vehicleNumber}')" 
+                                                        <button onclick="deleteKilometerReading('${escapeJsString(vehicle.id)}', '${escapeJsString(km.id)}', '${escapeJsString(vehicle.vehicleNumber)}')" 
                                                                 style="padding: 6px 12px; background: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; transition: all 0.3s;"
                                                                 onmouseover="this.style.background='#c82333'; this.style.transform='scale(1.05)'" 
                                                                 onmouseout="this.style.background='#dc3545'; this.style.transform='scale(1)'"
@@ -8744,27 +9583,28 @@
                                             <div class="document-item" style="opacity: 0.5;">
                                                 <div style="padding: 20px; text-align: center; color: #999;">
                                                     <i class="fas fa-exclamation-triangle"></i>
-                                                    <div class="doc-name">${doc.name || 'مستند غير معروف'}</div>
+                                                    <div class="doc-name">${escapeHtml(doc.name) || 'مستند غير معروف'}</div>
                                                     <small>خطأ في تحميل الصورة</small>
                                                 </div>
                                             </div>
                                         `;
                                     }
-                                    // Escape single quotes in base64 data for use in onclick
-                                    const safeBase64Data = base64Data.replace(/'/g, "\\'");
-                                    const safeDocName = (doc.name || 'مستند').replace(/'/g, "\\'");
+                                    // Escape for inline-handler (JS string) and display (HTML) contexts
+                                    const safeBase64Data = escapeJsString(base64Data);
+                                    const safeDocName = escapeJsString(doc.name || 'مستند');
+                                    const displayDocName = escapeHtml(doc.name || 'مستند');
                                     return `
                                         <div class="document-item">
-                                            <img src="${base64Data}" alt="${safeDocName}" onerror="this.style.display='none'; this.parentElement.querySelector('.doc-error').style.display='block';" onclick="viewImage('${safeBase64Data}', '${safeDocName}')">
+                                            <img src="${base64Data}" alt="${displayDocName}" onerror="this.style.display='none'; this.parentElement.querySelector('.doc-error').style.display='block';" onclick="viewImage('${safeBase64Data}', '${safeDocName}')">
                                             <div class="doc-error" style="display: none; padding: 10px; text-align: center; color: #999;">
                                                 <i class="fas fa-exclamation-triangle"></i>
                                                 <small>خطأ في تحميل الصورة</small>
                                             </div>
-                                            <div class="doc-name">${safeDocName}</div>
+                                            <div class="doc-name">${displayDocName}</div>
                                             <button class="doc-view" onclick="event.stopPropagation(); viewImage('${safeBase64Data}', '${safeDocName}')" title="معاينة">
                                                 <i class="fas fa-eye"></i>
                                             </button>
-                                            <button class="doc-delete" onclick="event.stopPropagation(); deleteDocument('${vehicle.id}', '${doc.id}')" title="حذف">
+                                            <button class="doc-delete" onclick="event.stopPropagation(); deleteDocument('${escapeJsString(vehicle.id)}', '${escapeJsString(doc.id)}')" title="حذف">
                                                 <i class="fas fa-times"></i>
                                             </button>
                                         </div>
@@ -8775,7 +9615,7 @@
                                         <div class="document-item" style="opacity: 0.5;">
                                             <div style="padding: 20px; text-align: center; color: #999;">
                                                 <i class="fas fa-exclamation-triangle"></i>
-                                                <div class="doc-name">${doc.name || 'مستند غير معروف'}</div>
+                                                <div class="doc-name">${escapeHtml(doc.name) || 'مستند غير معروف'}</div>
                                                 <small>خطأ في عرض المستند</small>
                                             </div>
                                         </div>
@@ -8795,7 +9635,7 @@
                         </h3>
                         
                         <div style="margin-bottom: 15px;">
-                            <button onclick="showMaintenanceModal('${vehicle.id}', '${vehicle.vehicleNumber}')" 
+                            <button onclick="showMaintenanceModal('${escapeJsString(vehicle.id)}', '${escapeJsString(vehicle.vehicleNumber)}')" 
                                     style="padding: 10px 20px; background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; transition: all 0.3s;"
                                     onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(255, 152, 0, 0.4)'"
                                     onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
@@ -8842,25 +9682,25 @@
                                             
                                             return `
                                                 <tr style="border-bottom: 1px solid var(--border-color);">
-                                                    <td style="padding: 10px; color: var(--text-dark);">${date}</td>
-                                                    <td style="padding: 10px; font-weight: 600; color: var(--primary-color);">${maintenance.type || '-'}</td>
-                                                    <td style="padding: 10px; color: var(--text-light); font-size: 12px;" title="${maintenance.description || ''}">${(maintenance.description || '-').substring(0, 50)}${(maintenance.description || '').length > 50 ? '...' : ''}</td>
-                                                    <td style="padding: 10px; color: var(--text-dark); font-weight: 500;">${costDisplay}</td>
+                                                    <td style="padding: 10px; color: var(--text-dark);">${escapeHtml(date)}</td>
+                                                    <td style="padding: 10px; font-weight: 600; color: var(--primary-color);">${escapeHtml(maintenance.type) || '-'}</td>
+                                                    <td style="padding: 10px; color: var(--text-light); font-size: 12px;" title="${escapeHtml(maintenance.description)}">${escapeHtml((maintenance.description || '-').substring(0, 50))}${(maintenance.description || '').length > 50 ? '...' : ''}</td>
+                                                    <td style="padding: 10px; color: var(--text-dark); font-weight: 500;">${escapeHtml(costDisplay)}</td>
                                                     <td style="padding: 10px;">
                                                         <span style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 18px; background: ${statusColor}20; color: ${statusColor}; font-size: 12px; font-weight: 600;">
                                                             <i class="fas fa-circle" style="font-size: 8px;"></i>
-                                                            ${maintenance.status || 'غير محدد'}
+                                                            ${escapeHtml(maintenance.status) || 'غير محدد'}
                                                         </span>
                                                     </td>
                                                     <td style="padding: 10px; text-align: center;">
-                                                        <button onclick="showMaintenanceModal('${vehicle.id}', '${vehicle.vehicleNumber}', '${maintenance.id}')" 
+                                                        <button onclick="showMaintenanceModal('${escapeJsString(vehicle.id)}', '${escapeJsString(vehicle.vehicleNumber)}', '${escapeJsString(maintenance.id)}')" 
                                                                 style="padding: 6px 12px; background: #667eea; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; margin-left: 5px; transition: all 0.3s;"
                                                                 onmouseover="this.style.background='#5568d3'; this.style.transform='scale(1.05)'" 
                                                                 onmouseout="this.style.background='#667eea'; this.style.transform='scale(1)'"
                                                                 title="تعديل">
                                                             <i class="fas fa-edit"></i>
                                                         </button>
-                                                        <button onclick="deleteMaintenanceRecord('${vehicle.id}', '${maintenance.id}', '${vehicle.vehicleNumber}')" 
+                                                        <button onclick="deleteMaintenanceRecord('${escapeJsString(vehicle.id)}', '${escapeJsString(maintenance.id)}', '${escapeJsString(vehicle.vehicleNumber)}')" 
                                                                 style="padding: 6px 12px; background: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; transition: all 0.3s;"
                                                                 onmouseover="this.style.background='#c82333'; this.style.transform='scale(1.05)'" 
                                                                 onmouseout="this.style.background='#dc3545'; this.style.transform='scale(1)'"
@@ -9096,11 +9936,11 @@
                     <h2 style="color: var(--primary-color); margin-bottom: 20px;">
                         <i class="fas fa-tachometer-alt"></i> إضافة قراءة عداد جديدة
                     </h2>
-                    <p style="color: var(--text-light); margin-bottom: 20px;">المركبة: <strong>${vehicleNumber}</strong></p>
+                    <p style="color: var(--text-light); margin-bottom: 20px;">المركبة: <strong>${escapeHtml(vehicleNumber)}</strong></p>
                     ${lastKmValue ? `<div style="background: #fff3cd; padding: 12px; border-radius: 8px; margin-bottom: 20px; border-right: 4px solid #ffc107;">
                         <i class="fas fa-info-circle"></i> <strong>آخر قراءة:</strong> ${lastKmValue.toLocaleString('en-US')} كم
                     </div>` : ''}
-                    <form id="kilometer-form" onsubmit="addKilometerReading(event, '${vehicleId}', '${vehicleNumber}')">
+                    <form id="kilometer-form" onsubmit="addKilometerReading(event, '${escapeJsString(vehicleId)}', '${escapeJsString(vehicleNumber)}')">
                         <div class="form-group">
                             <label>قراءة العداد *:</label>
                             <input type="number" id="new-kilometers" required min="0" step="0.01" placeholder="مثل: 50000" style="width: 100%; padding: 12px; border: 2px solid var(--border-color); border-radius: 8px;">
@@ -9973,15 +10813,15 @@
             validVehicles.forEach(vehicle => {
                 htmlContent += `
                     <tr>
-                        <td>${vehicle.vehicleNumber || ''}</td>
-                        <td>${vehicle.vehicleType || ''}</td>
-                        <td>${vehicle.description || ''}</td>
-                        <td>${vehicle.plate || ''}</td>
-                        <td>${vehicle.brand || ''}</td>
-                        <td>${vehicle.model || ''}</td>
-                        <td>${vehicle.status || ''}</td>
-                        <td>${vehicle.currentProject || ''}</td>
-                        <td>${vehicle.color || ''}</td>
+                        <td>${escapeHtml(vehicle.vehicleNumber)}</td>
+                        <td>${escapeHtml(vehicle.vehicleType)}</td>
+                        <td>${escapeHtml(vehicle.description)}</td>
+                        <td>${escapeHtml(vehicle.plate)}</td>
+                        <td>${escapeHtml(vehicle.brand)}</td>
+                        <td>${escapeHtml(vehicle.model)}</td>
+                        <td>${escapeHtml(vehicle.status)}</td>
+                        <td>${escapeHtml(vehicle.currentProject)}</td>
+                        <td>${escapeHtml(vehicle.color)}</td>
                     </tr>
                 `;
             });
@@ -10069,6 +10909,8 @@
                 loadProfilePage();
             } else if (pageId === 'settings') {
                 loadSettingsPage();
+            } else if (pageId === 'users') {
+                loadUsersPage();
             }
         }
 
@@ -10131,19 +10973,19 @@
                     
                     <div style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; padding: 25px; border-radius: 12px; text-align: center; box-shadow: var(--shadow-md);">
                         <div style="font-size: 42px; font-weight: bold; margin-bottom: 10px;">${byStatus[activeStatus] || 0}</div>
-                        <div style="font-size: 16px; opacity: 0.95;">${activeStatus}</div>
+                        <div style="font-size: 16px; opacity: 0.95;">${escapeHtml(activeStatus)}</div>
                         <div style="font-size: 14px; opacity: 0.8; margin-top: 5px;">${total > 0 ? ((byStatus[activeStatus] || 0) / total * 100).toFixed(1) : 0}%</div>
                     </div>
                     
                     <div style="background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%); color: white; padding: 25px; border-radius: 12px; text-align: center; box-shadow: var(--shadow-md);">
                         <div style="font-size: 42px; font-weight: bold; margin-bottom: 10px;">${byStatus[stoppedStatus] || 0}</div>
-                        <div style="font-size: 16px; opacity: 0.95;">${stoppedStatus}</div>
+                        <div style="font-size: 16px; opacity: 0.95;">${escapeHtml(stoppedStatus)}</div>
                         <div style="font-size: 14px; opacity: 0.8; margin-top: 5px;">${total > 0 ? ((byStatus[stoppedStatus] || 0) / total * 100).toFixed(1) : 0}%</div>
                     </div>
                     
                     <div style="background: linear-gradient(135deg, #17a2b8 0%, #138496 100%); color: white; padding: 25px; border-radius: 12px; text-align: center; box-shadow: var(--shadow-md);">
                         <div style="font-size: 42px; font-weight: bold; margin-bottom: 10px;">${byStatus[maintenanceStatus] || 0}</div>
-                        <div style="font-size: 16px; opacity: 0.95;">${maintenanceStatus}</div>
+                        <div style="font-size: 16px; opacity: 0.95;">${escapeHtml(maintenanceStatus)}</div>
                         <div style="font-size: 14px; opacity: 0.8; margin-top: 5px;">${total > 0 ? ((byStatus[maintenanceStatus] || 0) / total * 100).toFixed(1) : 0}%</div>
                     </div>
                 </div>
@@ -10157,7 +10999,7 @@
                         ${statusPercentages.map(({status, count, percentage}) => `
                             <div>
                                 <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                                    <span style="color: var(--text-dark); font-weight: 600;">${status || 'غير محدد'}</span>
+                                    <span style="color: var(--text-dark); font-weight: 600;">${escapeHtml(status) || 'غير محدد'}</span>
                                     <span style="color: var(--text-light);">${count} (${percentage}%)</span>
                                 </div>
                                 <div style="background: var(--light-bg); height: 25px; border-radius: 12px; overflow: hidden; position: relative;">
@@ -10180,7 +11022,7 @@
                             return `
                                 <div style="background: var(--light-bg); padding: 20px; border-radius: 8px; border-right: 4px solid #667eea; transition: transform 0.3s;" onmouseover="this.style.transform='translateX(-5px)'" onmouseout="this.style.transform='translateX(0)'">
                                     <div style="font-size: 28px; font-weight: bold; color: #667eea; margin-bottom: 5px;">${count}</div>
-                                    <div style="color: var(--text-dark); font-weight: 500; margin-bottom: 3px;">${type || 'غير محدد'}</div>
+                                    <div style="color: var(--text-dark); font-weight: 500; margin-bottom: 3px;">${escapeHtml(type) || 'غير محدد'}</div>
                                     <div style="color: var(--text-light); font-size: 14px;">${percentage}% من الإجمالي</div>
                                 </div>
                             `;
@@ -10197,7 +11039,7 @@
                             ${Object.entries(byLocation).map(([location, count]) => `
                                 <div style="background: var(--light-bg); padding: 15px; border-radius: 8px; border-right: 4px solid #17a2b8;">
                                     <div style="font-size: 24px; font-weight: bold; color: #17a2b8;">${count}</div>
-                                    <div style="color: var(--text-dark); margin-top: 5px;">${location}</div>
+                                    <div style="color: var(--text-dark); margin-top: 5px;">${escapeHtml(location)}</div>
                                 </div>
                             `).join('')}
                         </div>
@@ -10309,13 +11151,13 @@
                 const projectFilter = document.getElementById('tracking-project-filter');
                 if (projectFilter) {
                     projectFilter.innerHTML = '<option value="">كل المشاريع</option>' + 
-                        projects.map(p => `<option value="${p}">${p}</option>`).join('');
+                        projects.map(p => `<option value="${escapeHtml(p)}">${escapeHtml(p)}</option>`).join('');
                 }
                 
                 const typeFilter = document.getElementById('tracking-type-filter');
                 if (typeFilter) {
                     typeFilter.innerHTML = '<option value="">كل الأنواع</option>' + 
-                        types.map(t => `<option value="${t}">${t}</option>`).join('');
+                        types.map(t => `<option value="${escapeHtml(t)}">${escapeHtml(t)}</option>`).join('');
                 }
                 
                 // Filter vehicles by all filters
@@ -10372,7 +11214,7 @@
                         ${Object.keys(byProject).length > 0 ? Object.entries(byProject).map(([project, vehicles]) => `
                             <div style="background: white; padding: 25px; border-radius: var(--border-radius); box-shadow: var(--shadow-sm); margin-bottom: 20px;">
                                 <h3 style="color: var(--text-dark); margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
-                                    <i class="fas fa-building" style="color: var(--primary-color);"></i> ${project}
+                                    <i class="fas fa-building" style="color: var(--primary-color);"></i> ${escapeHtml(project)}
                                     <span style="background: var(--primary-color); color: white; padding: 4px 12px; border-radius: 20px; font-size: 14px;">${vehicles.length} مركبة</span>
                                 </h3>
                                 
@@ -10383,18 +11225,18 @@
                                         return `
                                             <div style="background: var(--light-bg); padding: 15px; border-radius: 8px; border-right: 4px solid ${validityColor};">
                                                 <div style="font-weight: bold; color: var(--text-dark); margin-bottom: 8px;">
-                                                    ${v.vehicleNumber} - ${v.description || v.vehicleType || ''}
+                                                    ${escapeHtml(v.vehicleNumber)} - ${escapeHtml(v.description || v.vehicleType || '')}
                                                 </div>
                                                 <div style="font-size: 13px; color: var(--text-light); margin-bottom: 5px;">
                                                     <i class="fas fa-certificate"></i> الصلاحية: 
-                                                    <span style="color: ${validityColor}; font-weight: bold;">${v.annualValidityStatus || 'مستمرة'}</span>
+                                                    <span style="color: ${validityColor}; font-weight: bold;">${escapeHtml(v.annualValidityStatus) || 'مستمرة'}</span>
                                                 </div>
                                                 ${v.annualExpiryDate ? `
                                                     <div style="font-size: 12px; color: var(--text-muted);">
-                                                        <i class="fas fa-calendar"></i> انتهاء: ${v.annualExpiryDate}
+                                                        <i class="fas fa-calendar"></i> انتهاء: ${escapeHtml(v.annualExpiryDate)}
                                                     </div>
                                                 ` : ''}
-                                                <button onclick="editVehicle('${v.id}'); showPage('vehicles');" 
+                                                <button onclick="editVehicle('${escapeJsString(v.id)}'); showPage('vehicles');" 
                                                         style="margin-top: 10px; padding: 6px 12px; background: var(--primary-color); color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 12px; width: 100%;">
                                                     <i class="fas fa-edit"></i> تعديل
                                                 </button>
@@ -10428,11 +11270,11 @@
                                                     'غير محدد';
                                                 return `
                                                     <tr style="border-bottom: 1px solid var(--border-color);">
-                                                        <td style="padding: 10px;">${record.vehicleNumber || ''}</td>
-                                                        <td style="padding: 10px;">${record.fromProject || ''}</td>
-                                                        <td style="padding: 10px; font-weight: bold; color: var(--primary-color);">${record.toProject || ''}</td>
-                                                        <td style="padding: 10px; color: var(--text-light);">${date}</td>
-                                                        <td style="padding: 10px; color: var(--text-light); font-size: 13px;">${record.notes || ''}</td>
+                                                        <td style="padding: 10px;">${escapeHtml(record.vehicleNumber)}</td>
+                                                        <td style="padding: 10px;">${escapeHtml(record.fromProject)}</td>
+                                                        <td style="padding: 10px; font-weight: bold; color: var(--primary-color);">${escapeHtml(record.toProject)}</td>
+                                                        <td style="padding: 10px; color: var(--text-light);">${escapeHtml(date)}</td>
+                                                        <td style="padding: 10px; color: var(--text-light); font-size: 13px;">${escapeHtml(record.notes)}</td>
                                                     </tr>
                                                 `;
                                             }).join('')}
@@ -10735,18 +11577,19 @@
         window.deleteMaintenanceRecord = deleteMaintenanceRecord;
         window.handleVehicleSubmitButton = handleVehicleSubmitButton;
         window.toggleViewMode = toggleViewMode;
-        window.toggleAdvancedSearch = toggleAdvancedSearch;
-        window.applyAdvancedSearch = applyAdvancedSearch;
-        window.clearAdvancedSearch = clearAdvancedSearch;
         window.exportToExcel = exportToExcel;
         window.showReportsModal = showReportsModal;
         window.closeReportsModal = closeReportsModal;
         window.showPage = showPage;
+        window.loadUsersPage = loadUsersPage;
+        window.verifyUsersAccess = verifyUsersAccess;
+        window.openUserFormModal = openUserFormModal;
+        window.closeUserFormModal = closeUserFormModal;
+        window.saveUser = saveUser;
+        window.loadUsersList = loadUsersList;
+        window.deleteUserRecord = deleteUserRecord;
         window.showSettingsPage = showSettingsPage;
         window.showProfilePage = showProfilePage;
-        window.toggleAdvancedSearch = toggleAdvancedSearch;
-        window.applyAdvancedSearch = applyAdvancedSearch;
-        window.clearAdvancedSearch = clearAdvancedSearch;
         window.toggleDarkMode = toggleDarkMode;
         window.exportToPDF = exportToPDF;
         window.loadTrackingPage = loadTrackingPage;
@@ -11275,15 +12118,15 @@
                             <div style="flex: 1; display: flex; flex-direction: column; gap: 4px;">
                                 <div style="font-weight: 500; color: var(--text-dark); display: flex; align-items: center; gap: 5px;">
                                     ${usedIndicator}
-                                    ${term.name1 || ''}
+                                    ${escapeHtml(term.name1) || ''}
                                 </div>
-                                ${term.name2 ? `<div style="font-size: 12px; color: var(--text-light);">${term.name2}</div>` : ''}
+                                ${term.name2 ? `<div style="font-size: 12px; color: var(--text-light);">${escapeHtml(term.name2)}</div>` : ''}
                             </div>
-                            <button onclick="openTermModal('${category}', '${term.id}')" 
+                            <button onclick="openTermModal('${escapeJsString(category)}', '${escapeJsString(term.id)}')" 
                                     style="background: var(--primary-color); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px;">
                                 <i class="fas fa-edit"></i>
                             </button>
-                            <button onclick="${isUsed ? 'showToast(\'لا يمكن حذف المصطلح المستخدم\', \'error\')' : `deleteTerm('${category}', '${term.id}')`}" 
+                            <button onclick="${isUsed ? 'showToast(\'لا يمكن حذف المصطلح المستخدم\', \'error\')' : `deleteTerm('${escapeJsString(category)}', '${escapeJsString(term.id)}')`}" 
                                     style="${deleteButtonStyle}"
                                     title="${deleteButtonTitle}">
                                 <i class="fas fa-trash"></i>
