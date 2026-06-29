@@ -10992,147 +10992,187 @@
             }
         }
 
+        // ===== Reports (reorganized) =====
+        let reportChartInstances = {};
+        const REPORT_PALETTE = ['#4361ee', '#3a0ca3', '#7209b7', '#f72585', '#4cc9f0', '#4895ef', '#560bad', '#b5179e', '#f8961e', '#90be6d', '#577590', '#43aa8b'];
+
         function loadReportsPage() {
-            const total = allVehicles.length;
-            const byType = {};
-            const byStatus = {};
-            const byLocation = {};
-            const byBrand = {};
-            const byProject = {};
-            
-            allVehicles.forEach(v => {
-                const vehicleType = (v.vehicleType || '').trim();
+            if (!Array.isArray(allVehicles)) allVehicles = [];
+            const reportsContent = document.getElementById('reports-content');
+            if (!reportsContent) return;
+
+            reportsContent.innerHTML = `
+                <div class="trk-filters" style="margin-top:4px;">
+                    <div class="fg search">
+                        <label data-i18n="buttons.search">بحث</label>
+                        <input type="text" id="rep-search" placeholder="رقم المركبة، اللوحة، الماركة..." oninput="renderReports()">
+                    </div>
+                    <div class="fg">
+                        <label data-i18n="pages.tracking.vehicleType">نوع المركبة</label>
+                        <select id="rep-type" onchange="renderReports()"><option value="">كل الأنواع</option></select>
+                    </div>
+                    <div class="fg">
+                        <label data-i18n="pages.tracking.vehicleStatus">الحالة</label>
+                        <select id="rep-status" onchange="renderReports()"><option value="">كل الحالات</option></select>
+                    </div>
+                    <div class="fg">
+                        <label data-i18n="pages.tracking.project">المشروع</label>
+                        <select id="rep-project" onchange="renderReports()"><option value="">كل المشاريع</option></select>
+                    </div>
+                    <button class="trk-reset" onclick="resetReportsFilters()"><i class="fas fa-rotate-left"></i> <span data-i18n="pages.tracking.reset">إعادة تعيين</span></button>
+                    <button class="trk-reset" onclick="exportToExcel()"><i class="fas fa-file-excel"></i> Excel</button>
+                    <button class="trk-reset" onclick="exportToPDF()"><i class="fas fa-file-pdf"></i> PDF</button>
+                </div>
+
+                <div class="trk-kpis">
+                    <div class="trk-kpi"><div class="k-num" id="rep-total">0</div><div class="k-lbl"><i class="fas fa-car-side"></i> إجمالي المركبات</div></div>
+                    <div class="trk-kpi good"><div class="k-num" id="rep-active">0</div><div class="k-lbl"><i class="fas fa-circle-check"></i> سارية</div></div>
+                    <div class="trk-kpi warn"><div class="k-num" id="rep-stopped">0</div><div class="k-lbl"><i class="fas fa-circle-pause"></i> متوقفة</div></div>
+                    <div class="trk-kpi"><div class="k-num" id="rep-maint">0</div><div class="k-lbl" style="color:#17a2b8;"><i class="fas fa-screwdriver-wrench"></i> صيانة</div></div>
+                    <div class="trk-kpi warn"><div class="k-num" id="rep-near">0</div><div class="k-lbl"><i class="fas fa-hourglass-half"></i> قريبة الانتهاء</div></div>
+                    <div class="trk-kpi danger"><div class="k-num" id="rep-expired">0</div><div class="k-lbl"><i class="fas fa-triangle-exclamation"></i> صلاحية منتهية</div></div>
+                </div>
+
+                <div class="trk-charts-grid">
+                    <div class="trk-section"><h3 style="margin:0 0 14px; font-size:15px; color:var(--text-dark);"><i class="fas fa-chart-pie" style="color:var(--primary-color);"></i> التوزيع حسب الحالة</h3><canvas id="rep-chart-status" height="220"></canvas></div>
+                    <div class="trk-section"><h3 style="margin:0 0 14px; font-size:15px; color:var(--text-dark);"><i class="fas fa-certificate" style="color:var(--primary-color);"></i> حالة الصلاحية</h3><canvas id="rep-chart-validity" height="220"></canvas></div>
+                    <div class="trk-section"><h3 style="margin:0 0 14px; font-size:15px; color:var(--text-dark);"><i class="fas fa-tags" style="color:var(--primary-color);"></i> التوزيع حسب النوع</h3><canvas id="rep-chart-type" height="220"></canvas></div>
+                    <div class="trk-section"><h3 style="margin:0 0 14px; font-size:15px; color:var(--text-dark);"><i class="fas fa-industry" style="color:var(--primary-color);"></i> أعلى الماركات</h3><canvas id="rep-chart-brand" height="220"></canvas></div>
+                    <div class="trk-section" style="grid-column:1/-1;"><h3 style="margin:0 0 14px; font-size:15px; color:var(--text-dark);"><i class="fas fa-building" style="color:var(--primary-color);"></i> التوزيع حسب المشروع</h3><canvas id="rep-chart-project" height="150"></canvas></div>
+                </div>
+
+                <div id="rep-tables"></div>
+            `;
+
+            // Populate filter options from full dataset
+            const valid = allVehicles.filter(v => v && v.id);
+            const fill = (id, values) => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                const base = el.querySelector('option')?.outerHTML || '<option value="">الكل</option>';
+                el.innerHTML = base + [...new Set(values.filter(Boolean))].sort().map(x => `<option value="${escapeHtml(x)}">${escapeHtml(x)}</option>`).join('');
+            };
+            fill('rep-type', valid.map(v => (v.vehicleType || '').trim()));
+            fill('rep-status', valid.map(v => (v.status || '').trim()));
+            fill('rep-project', valid.map(v => (v.currentProject || '').trim()));
+
+            renderReports();
+        }
+
+        function getReportsFilteredVehicles() {
+            const search = (document.getElementById('rep-search')?.value || '').trim().toLowerCase();
+            const type = document.getElementById('rep-type')?.value || '';
+            const status = document.getElementById('rep-status')?.value || '';
+            const project = document.getElementById('rep-project')?.value || '';
+            let list = allVehicles.filter(v => v && v.id);
+            if (type) list = list.filter(v => (v.vehicleType || '').trim() === type);
+            if (status) list = list.filter(v => (v.status || '').trim() === status);
+            if (project) list = list.filter(v => (v.currentProject || '').trim() === project);
+            if (search) {
+                list = list.filter(v => [v.vehicleNumber, v.plateNumber, v.plate, v.brand, v.model, v.description, v.currentProject]
+                    .filter(Boolean).join(' ').toLowerCase().includes(search));
+            }
+            return list;
+        }
+
+        function resetReportsFilters() {
+            ['rep-search', 'rep-type', 'rep-status', 'rep-project'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+            renderReports();
+        }
+
+        function renderReports() {
+            if (!Array.isArray(allVehicles)) allVehicles = [];
+            const vehicles = getReportsFilteredVehicles();
+            const total = vehicles.length;
+
+            const byType = {}, byStatus = {}, byBrand = {}, byProject = {}, byLocation = {};
+            vehicles.forEach(v => {
+                const type = (v.vehicleType || '').trim();
                 const status = (v.status || '').trim();
                 const brand = (v.brand || '').trim();
                 const project = (v.currentProject || '').trim();
-                
-                if (vehicleType) {
-                    byType[vehicleType] = (byType[vehicleType] || 0) + 1;
-                }
-                if (status) {
-                    byStatus[status] = (byStatus[status] || 0) + 1;
-                }
-                if (brand) {
-                    byBrand[brand] = (byBrand[brand] || 0) + 1;
-                }
-                if (project) {
-                    byProject[project] = (byProject[project] || 0) + 1;
-                }
-                if (v.location) {
-                    byLocation[v.location] = (byLocation[v.location] || 0) + 1;
-                }
+                if (type) byType[type] = (byType[type] || 0) + 1;
+                if (status) byStatus[status] = (byStatus[status] || 0) + 1;
+                if (brand) byBrand[brand] = (byBrand[brand] || 0) + 1;
+                if (project) byProject[project] = (byProject[project] || 0) + 1;
+                if (v.location) byLocation[v.location] = (byLocation[v.location] || 0) + 1;
             });
-            
-            // Get status terms to determine active status
-            const statusTerms = (termsData && termsData.status && Array.isArray(termsData.status)) 
-                ? termsData.status.map(t => t.name1).filter(s => s) 
-                : ['سارية', 'متوقفة', 'صيانة', 'مسحوبة'];
-            
-            const activeStatus = statusTerms.find(s => s === 'سارية' || s === 'تعمل' || s === 'نشطة') || statusTerms[0] || 'سارية';
+
+            const statusTerms = (termsData && termsData.status && Array.isArray(termsData.status))
+                ? termsData.status.map(t => t.name1).filter(s => s) : ['سارية', 'متوقفة', 'صيانة', 'مسحوبة'];
+            const activeStatus = statusTerms.find(s => s === 'سارية' || s === 'تعمل' || s === 'نشطة') || 'سارية';
             const maintenanceStatus = statusTerms.find(s => s === 'صيانة' || s === 'في الصيانة') || 'صيانة';
             const stoppedStatus = statusTerms.find(s => s === 'متوقفة' || s === 'متوقفة عن العمل') || 'متوقفة';
-            
-            const reportsContent = document.getElementById('reports-content');
-            if (!reportsContent) return;
-            
-            // Calculate percentages for charts
-            const statusPercentages = Object.entries(byStatus).map(([status, count]) => ({
-                status,
-                count,
-                percentage: total > 0 ? ((count / total) * 100).toFixed(1) : 0
-            }));
-            
-            reportsContent.innerHTML = `
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px;">
-                    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 25px; border-radius: 12px; text-align: center; box-shadow: var(--shadow-md);">
-                        <div style="font-size: 42px; font-weight: bold; margin-bottom: 10px;">${total}</div>
-                        <div style="font-size: 16px; opacity: 0.95;">إجمالي المركبات</div>
-                    </div>
-                    
-                    <div style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; padding: 25px; border-radius: 12px; text-align: center; box-shadow: var(--shadow-md);">
-                        <div style="font-size: 42px; font-weight: bold; margin-bottom: 10px;">${byStatus[activeStatus] || 0}</div>
-                        <div style="font-size: 16px; opacity: 0.95;">${escapeHtml(activeStatus)}</div>
-                        <div style="font-size: 14px; opacity: 0.8; margin-top: 5px;">${total > 0 ? ((byStatus[activeStatus] || 0) / total * 100).toFixed(1) : 0}%</div>
-                    </div>
-                    
-                    <div style="background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%); color: white; padding: 25px; border-radius: 12px; text-align: center; box-shadow: var(--shadow-md);">
-                        <div style="font-size: 42px; font-weight: bold; margin-bottom: 10px;">${byStatus[stoppedStatus] || 0}</div>
-                        <div style="font-size: 16px; opacity: 0.95;">${escapeHtml(stoppedStatus)}</div>
-                        <div style="font-size: 14px; opacity: 0.8; margin-top: 5px;">${total > 0 ? ((byStatus[stoppedStatus] || 0) / total * 100).toFixed(1) : 0}%</div>
-                    </div>
-                    
-                    <div style="background: linear-gradient(135deg, #17a2b8 0%, #138496 100%); color: white; padding: 25px; border-radius: 12px; text-align: center; box-shadow: var(--shadow-md);">
-                        <div style="font-size: 42px; font-weight: bold; margin-bottom: 10px;">${byStatus[maintenanceStatus] || 0}</div>
-                        <div style="font-size: 16px; opacity: 0.95;">${escapeHtml(maintenanceStatus)}</div>
-                        <div style="font-size: 14px; opacity: 0.8; margin-top: 5px;">${total > 0 ? ((byStatus[maintenanceStatus] || 0) / total * 100).toFixed(1) : 0}%</div>
-                    </div>
-                </div>
-                
-                <!-- Status Chart -->
-                <div style="background: white; padding: 25px; border-radius: var(--border-radius); box-shadow: var(--shadow-sm); margin-bottom: 20px;">
-                    <h3 style="color: var(--text-dark); margin-bottom: 20px; display: flex; align-items: center; gap: 8px;">
-                        <i class="fas fa-chart-pie"></i> التوزيع حسب الحالة
-                    </h3>
-                    <div style="display: flex; flex-direction: column; gap: 12px;">
-                        ${statusPercentages.map(({status, count, percentage}) => `
-                            <div>
-                                <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                                    <span style="color: var(--text-dark); font-weight: 600;">${escapeHtml(status) || 'غير محدد'}</span>
-                                    <span style="color: var(--text-light);">${count} (${percentage}%)</span>
-                                </div>
-                                <div style="background: var(--light-bg); height: 25px; border-radius: 12px; overflow: hidden; position: relative;">
-                                    <div style="background: ${getStatusColor(status)}; height: 100%; width: ${percentage}%; transition: width 0.5s ease; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: bold;">
-                                        ${percentage > 5 ? percentage + '%' : ''}
-                                    </div>
-                                </div>
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-                
-                <div style="background: white; padding: 25px; border-radius: var(--border-radius); box-shadow: var(--shadow-sm); margin-bottom: 20px;">
-                    <h3 style="color: var(--text-dark); margin-bottom: 20px; display: flex; align-items: center; gap: 8px;">
-                        <i class="fas fa-tags"></i> التوزيع حسب النوع
-                    </h3>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
-                        ${Object.entries(byType).map(([type, count]) => {
-                            const percentage = total > 0 ? ((count / total) * 100).toFixed(1) : 0;
-                            return `
-                                <div style="background: var(--light-bg); padding: 20px; border-radius: 8px; border-right: 4px solid #667eea; transition: transform 0.3s;" onmouseover="this.style.transform='translateX(-5px)'" onmouseout="this.style.transform='translateX(0)'">
-                                    <div style="font-size: 28px; font-weight: bold; color: #667eea; margin-bottom: 5px;">${count}</div>
-                                    <div style="color: var(--text-dark); font-weight: 500; margin-bottom: 3px;">${escapeHtml(type) || 'غير محدد'}</div>
-                                    <div style="color: var(--text-light); font-size: 14px;">${percentage}% من الإجمالي</div>
-                                </div>
-                            `;
-                        }).join('')}
-                    </div>
-                </div>
-                
-                ${Object.keys(byLocation).length > 0 ? `
-                    <div style="background: white; padding: 25px; border-radius: var(--border-radius); box-shadow: var(--shadow-sm); margin-bottom: 20px;">
-                        <h3 style="color: var(--text-dark); margin-bottom: 20px; display: flex; align-items: center; gap: 8px;">
-                            <i class="fas fa-map-marker-alt"></i> التوزيع حسب الموقع
-                        </h3>
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
-                            ${Object.entries(byLocation).map(([location, count]) => `
-                                <div style="background: var(--light-bg); padding: 15px; border-radius: 8px; border-right: 4px solid #17a2b8;">
-                                    <div style="font-size: 24px; font-weight: bold; color: #17a2b8;">${count}</div>
-                                    <div style="color: var(--text-dark); margin-top: 5px;">${escapeHtml(location)}</div>
-                                </div>
-                            `).join('')}
+
+            const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+            set('rep-total', total);
+            set('rep-active', byStatus[activeStatus] || 0);
+            set('rep-stopped', byStatus[stoppedStatus] || 0);
+            set('rep-maint', byStatus[maintenanceStatus] || 0);
+            set('rep-near', vehicles.filter(v => v.annualValidityStatus === 'قريب الانتهاء').length);
+            set('rep-expired', vehicles.filter(v => v.annualValidityStatus === 'نافذة').length);
+
+            // Build charts
+            if (typeof Chart !== 'undefined') {
+                Object.values(reportChartInstances).forEach(c => { try { c.destroy(); } catch (e) {} });
+                reportChartInstances = {};
+
+                const validity = { 'مستمرة': 0, 'قريب الانتهاء': 0, 'نافذة': 0 };
+                vehicles.forEach(v => { const s = v.annualValidityStatus || 'مستمرة'; validity[s] = (validity[s] || 0) + 1; });
+                const topBrands = Object.entries(byBrand).sort((a, b) => b[1] - a[1]).slice(0, 8);
+                const topProjects = Object.entries(byProject).sort((a, b) => b[1] - a[1]).slice(0, 12);
+
+                const mk = (id, cfg) => { const el = document.getElementById(id); if (el) reportChartInstances[id] = new Chart(el, cfg); };
+
+                mk('rep-chart-status', {
+                    type: 'doughnut',
+                    data: { labels: Object.keys(byStatus), datasets: [{ data: Object.values(byStatus), backgroundColor: Object.keys(byStatus).map(s => getStatusColor(s)) }] },
+                    options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+                });
+                mk('rep-chart-validity', {
+                    type: 'doughnut',
+                    data: { labels: Object.keys(validity), datasets: [{ data: Object.values(validity), backgroundColor: ['#1b8a52', '#fd7e14', '#dc3545'] }] },
+                    options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+                });
+                mk('rep-chart-type', {
+                    type: 'bar',
+                    data: { labels: Object.keys(byType), datasets: [{ data: Object.values(byType), backgroundColor: REPORT_PALETTE }] },
+                    options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } }
+                });
+                mk('rep-chart-brand', {
+                    type: 'bar',
+                    data: { labels: topBrands.map(b => b[0]), datasets: [{ data: topBrands.map(b => b[1]), backgroundColor: REPORT_PALETTE }] },
+                    options: { indexAxis: 'y', responsive: true, plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true, ticks: { precision: 0 } } } }
+                });
+                mk('rep-chart-project', {
+                    type: 'bar',
+                    data: { labels: topProjects.map(p => p[0]), datasets: [{ label: 'عدد المركبات', data: topProjects.map(p => p[1]), backgroundColor: '#4361ee' }] },
+                    options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } }
+                });
+            }
+
+            // Detail table (status breakdown with percentages)
+            const tables = document.getElementById('rep-tables');
+            if (tables) {
+                const statusRows = Object.entries(byStatus).sort((a, b) => b[1] - a[1]);
+                tables.innerHTML = `
+                    <div class="trk-section">
+                        <h3 style="margin:0 0 14px; font-size:15px; color:var(--text-dark);"><i class="fas fa-table-list" style="color:var(--primary-color);"></i> تفصيل الحالات</h3>
+                        <div style="overflow-x:auto;">
+                            <table class="trk-feed-table">
+                                <thead><tr><th>الحالة</th><th>العدد</th><th>النسبة</th></tr></thead>
+                                <tbody>
+                                    ${statusRows.length ? statusRows.map(([s, c]) => `
+                                        <tr>
+                                            <td><span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:${getStatusColor(s)}; margin-left:6px;"></span> ${escapeHtml(s)}</td>
+                                            <td style="font-weight:700;">${c}</td>
+                                            <td style="color:var(--text-light);">${total > 0 ? ((c / total) * 100).toFixed(1) : 0}%</td>
+                                        </tr>`).join('') : '<tr><td colspan="3" style="text-align:center; color:var(--text-light);">لا توجد بيانات</td></tr>'}
+                                </tbody>
+                            </table>
                         </div>
-                    </div>
-                ` : ''}
-                
-                <div style="text-align: center; margin-top: 30px; display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
-                    <button class="btn btn-primary" onclick="exportToExcel()" style="width: auto; padding: 12px 40px;">
-                        <i class="fas fa-file-excel"></i> تصدير Excel
-                    </button>
-                    <button class="btn btn-primary" onclick="exportToPDF()" style="width: auto; padding: 12px 40px; background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);">
-                        <i class="fas fa-file-pdf"></i> تصدير PDF
-                    </button>
-                </div>
-            `;
+                    </div>`;
+            }
         }
 
         async function loadProfilePage() {
@@ -11924,6 +11964,9 @@
         window.showProfilePage = showProfilePage;
         window.toggleDarkMode = toggleDarkMode;
         window.exportToPDF = exportToPDF;
+        window.loadReportsPage = loadReportsPage;
+        window.renderReports = renderReports;
+        window.resetReportsFilters = resetReportsFilters;
         window.loadTrackingPage = loadTrackingPage;
         window.filterTracking = filterTracking;
         window.renderTracking = renderTracking;
